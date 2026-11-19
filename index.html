@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Gastos Médicos - SMNYL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        /* Remover flechas en inputs numéricos */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .tab-active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .tab-inactive {
+            color: #6b7280;
+            border-bottom-color: transparent;
+        }
+        .tab-inactive:hover {
+            color: #4b5563;
+            border-bottom-color: #d1d5db;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col mb-10">
+        
+        <!-- Header Corporativo -->
+        <div class="bg-gradient-to-r from-blue-800 to-blue-600 p-8 text-white text-center">
+            <h1 class="text-3xl font-bold tracking-tight">Simulador de Aportaciones</h1>
+            <p class="text-blue-100 mt-2 text-sm md:text-base font-medium">Seguros Monterrey New York Life</p>
+        </div>
+
+        <!-- Navegación por Pestañas -->
+        <div class="border-b border-gray-200 bg-gray-50">
+            <nav class="flex -mb-px" aria-label="Tabs">
+                <button onclick="switchTab('tradicional')" id="tab-tradicional" class="tab-active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200">
+                    Alfa Medical Tradicional
+                </button>
+                <button onclick="switchTab('flex')" id="tab-flex" class="tab-inactive w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200">
+                    Alfa Medical Flex
+                </button>
+            </nav>
+        </div>
+
+        <div class="p-6 md:p-8 flex-grow">
+            
+            <!-- MÓDULO TRADICIONAL -->
+            <div id="modulo-tradicional" class="block space-y-6 animate-fade-in">
+                
+                <div>
+                    <label for="factura-trad" class="block text-sm font-semibold text-gray-700 mb-2">Monto Total de la Factura Médica ($)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-lg">$</span>
+                        </div>
+                        <input type="text" id="factura-trad" oninput="formatearEntrada(this)" class="block w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 shadow-sm" placeholder="Ej. 150,000">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="servicio-trad" class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Servicio</label>
+                        <select id="servicio-trad" onchange="actualizarCamposTradicional()" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm">
+                            <option value="Hospitalización">Hospitalización</option>
+                            <option value="Consulta Médica">Consulta Médica</option>
+                            <option value="Gastos Fuera del Hospital">Gastos Fuera del Hospital</option>
+                        </select>
+                    </div>
+
+                    <div id="cont-deducible-trad">
+                        <label for="deducible-trad" class="block text-sm font-semibold text-gray-700 mb-2">Deducible Contratado</label>
+                        <select id="deducible-trad" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm">
+                            <option value="25000">$ 25,000</option>
+                            <option value="29000">$ 29,000</option>
+                            <option value="35000">$ 35,000</option>
+                            <option value="41000">$ 41,000</option>
+                            <option value="47000">$ 47,000</option>
+                            <option value="53000">$ 53,000</option>
+                            <option value="59000">$ 59,000</option>
+                            <option value="65000">$ 65,000</option>
+                            <option value="77000">$ 77,000</option>
+                            <option value="96000">$ 96,000</option>
+                            <option value="109000">$ 109,000</option>
+                            <option value="121000">$ 121,000</option>
+                            <option value="200000" selected>$ 200,000</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Coaseguro y Puntos Adicionales Tradicional -->
+                <div id="cont-coaseguro-trad" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    <div>
+                        <label for="coaseguro-trad" class="block text-sm font-semibold text-gray-700 mb-2">Porcentaje y Tope de Coaseguro</label>
+                        <select id="coaseguro-trad" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm">
+                            <option value="10|97000" selected>10% - Tope: $97,000</option>
+                            <option value="15|103000">15% - Tope: $103,000</option>
+                            <option value="20|109000">20% - Tope: $109,000</option>
+                            <option value="25|114000">25% - Tope: $114,000</option>
+                        </select>
+                        <p id="aviso-coaseguro-diez" class="hidden text-sm text-indigo-700 mt-2 font-medium bg-indigo-50 p-3 rounded border border-indigo-200">
+                            * Nota: Para este servicio no aplica deducible. Se calculará internamente un 10% de coaseguro base (más puntos adicionales si se indican), respetando el tope seleccionado.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="extra-coaseguro-trad" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Aumentar Coaseguro (+ Puntos %)
+                        </label>
+                        <div class="flex rounded-lg shadow-sm">
+                            <button type="button" onclick="ajustarPuntos('extra-coaseguro-trad', -5)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold border border-r-0 border-gray-300 rounded-l-lg transition">
+                                -5
+                            </button>
+                            <div class="relative flex-1">
+                                <input type="number" id="extra-coaseguro-trad" min="0" max="90" value="0" class="block w-full py-3 px-3 border-y border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-center font-semibold text-gray-800" placeholder="0">
+                                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm pointer-events-none">%</span>
+                            </div>
+                            <button type="button" onclick="ajustarPuntos('extra-coaseguro-trad', 5)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold border border-l-0 border-gray-300 rounded-r-lg transition">
+                                +5
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1.5">Ej. Cambio de nivel hospitalario o penalización (+10, +20 pts, etc.).</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                    <button onclick="calcularTradicional()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                        Calcular Aportación
+                    </button>
+                    <button onclick="limpiarDatos('tradicional')" class="sm:w-auto w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-sm">
+                        Limpiar Datos
+                    </button>
+                </div>
+
+                <div id="error-trad" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mt-4 shadow-sm">
+                    <p class="font-bold">Aviso</p>
+                    <p>Por favor, ingrese un monto válido para la factura médica.</p>
+                </div>
+
+                <div id="resultados-trad" class="hidden mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">Resumen del Siniestro (Alfa Medical Tradicional)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-orange-50 rounded-xl p-5 border border-orange-100 shadow-sm">
+                            <p class="text-sm font-semibold text-orange-800 uppercase tracking-wide mb-1">Aportación Cliente</p>
+                            <p id="res-total-cliente-trad" class="text-3xl font-bold text-orange-600 mb-4">$0.00</p>
+                            <div class="space-y-2 text-sm text-gray-700 border-t border-orange-200 pt-3">
+                                <div class="flex justify-between"><span id="lbl-res-deducible">Deducible:</span><span id="res-deducible-trad" class="font-medium">$0.00</span></div>
+                                <div class="flex justify-between"><span id="lbl-res-coaseguro">Coaseguro:</span><span id="res-coaseguro-trad" class="font-medium">$0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-blue-800 uppercase tracking-wide mb-1">Aportación SMNYL</p>
+                                <p id="res-total-smnyl-trad" class="text-3xl font-bold text-blue-600">$0.00</p>
+                            </div>
+                            <div class="text-sm text-gray-700 border-t border-blue-200 pt-3 mt-4 flex justify-between">
+                                <span>Factura Total:</span><span id="res-factura-trad" class="font-medium text-gray-900">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="infografia-trad" class="mt-6 w-full animate-fade-in"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO FLEX -->
+            <div id="modulo-flex" class="hidden space-y-6 animate-fade-in">
+                
+                <div>
+                    <label for="factura-flex" class="block text-sm font-semibold text-gray-700 mb-2">Monto Total de la Factura Médica ($)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-lg">$</span>
+                        </div>
+                        <input type="text" id="factura-flex" oninput="formatearEntrada(this)" class="block w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150 shadow-sm" placeholder="Ej. 150,000">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label for="plan-flex" class="block text-sm font-semibold text-gray-700 mb-2">Plan</label>
+                        <select id="plan-flex" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm">
+                            <option value="Set A">Set A</option>
+                            <option value="Set B">Set B</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="servicio-flex" class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Servicio</label>
+                        <select id="servicio-flex" onchange="actualizarCamposFlex()" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm">
+                            <option value="Hospitalización">Hospitalización</option>
+                            <option value="Servicios de Corta Estancia">Servicios de Corta Estancia</option>
+                            <option value="Consulta Médica">Consulta Médica</option>
+                            <option value="Servicios Fuera del Hospital">Servicios Fuera del Hospital</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="nivel-flex" id="label-nivel" class="block text-sm font-semibold text-gray-700 mb-2">Nivel Hospitalario</label>
+                        <select id="nivel-flex" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm">
+                            <option value="A">A</option>
+                            <option value="AA">AA</option>
+                            <option value="AAA">AAA</option>
+                            <option value="Preferente">Preferente</option>
+                        </select>
+                    </div>
+
+                    <!-- Contenedor para Consultas -->
+                    <div id="contenedor-consultas-flex" class="hidden">
+                        <label for="num-consultas-flex" class="block text-sm font-semibold text-gray-700 mb-2">No. Consultas</label>
+                        <input type="number" id="num-consultas-flex" min="1" value="1" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white text-center shadow-sm" placeholder="1">
+                    </div>
+
+                    <!-- Contenedor para Puntos Adicionales de Participación Flex -->
+                    <div id="contenedor-extra-part-flex">
+                        <label for="extra-part-flex" id="label-extra-part-flex" class="block text-sm font-semibold text-gray-700 mb-2">
+                            + Puntos Participación (%)
+                        </label>
+                        <div class="flex rounded-lg shadow-sm">
+                            <button type="button" id="btn-menos-flex" onclick="ajustarPuntos('extra-part-flex', -5)" class="px-3 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold border border-r-0 border-gray-300 rounded-l-lg transition">
+                                -5
+                            </button>
+                            <div class="relative flex-1">
+                                <input type="number" id="extra-part-flex" min="0" max="90" value="0" class="block w-full py-3 px-2 border-y border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-center font-semibold text-gray-800" placeholder="0">
+                                <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 text-xs pointer-events-none">%</span>
+                            </div>
+                            <button type="button" id="btn-mas-flex" onclick="ajustarPuntos('extra-part-flex', 5)" class="px-3 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold border border-l-0 border-gray-300 rounded-r-lg transition">
+                                +5
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                    <button onclick="calcularFlex()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                        Calcular Aportación
+                    </button>
+                    <button onclick="limpiarDatos('flex')" class="sm:w-auto w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-sm">
+                        Limpiar Datos
+                    </button>
+                </div>
+
+                <div id="error-flex" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mt-4 shadow-sm">
+                    <p class="font-bold">Aviso</p>
+                    <p>Por favor, ingrese un monto válido para la factura médica.</p>
+                </div>
+
+                <div id="resultados-flex" class="hidden mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">Resumen del Siniestro (Alfa Medical Flex)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-indigo-50 rounded-xl p-5 border border-indigo-100 shadow-sm">
+                            <p class="text-sm font-semibold text-indigo-800 uppercase tracking-wide mb-1">Aportación Cliente</p>
+                            <p id="res-total-cliente-flex-val" class="text-3xl font-bold text-indigo-600 mb-4">$0.00</p>
+                            <div class="space-y-2 text-sm text-gray-700 border-t border-indigo-200 pt-3">
+                                <div class="flex justify-between"><span>Copago Fijo:</span><span id="res-copago-flex" class="font-medium">$0.00</span></div>
+                                <div class="flex justify-between"><span id="lbl-participacion-flex">Participación:</span><span id="res-participacion-flex" class="font-medium">$0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-blue-800 uppercase tracking-wide mb-1">Aportación SMNYL</p>
+                                <p id="res-total-smnyl-flex-val" class="text-3xl font-bold text-blue-600">$0.00</p>
+                            </div>
+                            <div class="text-sm text-gray-700 border-t border-blue-200 pt-3 mt-4 flex justify-between">
+                                <span>Factura Total:</span><span id="res-factura-flex-val" class="font-medium text-gray-900">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="infografia-flex" class="mt-6 w-full animate-fade-in"></div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-gray-50 p-4 border-t border-gray-200 text-center w-full z-10 mt-auto">
+            <p class="text-sm text-gray-600 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Nota: La suma asegurada máxima institucional es de <strong class="text-gray-800">$170,000,000 MXN</strong>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const mxnFormatter = new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: 2
+        });
+
+        function formatearEntrada(input) {
+            let valor = input.value.replace(/\D/g, "");
+            if (valor !== "") {
+                input.value = Number(valor).toLocaleString('en-US');
+            } else {
+                input.value = "";
+            }
+        }
+
+        function ajustarPuntos(inputId, delta) {
+            const input = document.getElementById(inputId);
+            if (input.disabled) return;
+            let actual = parseFloat(input.value) || 0;
+            let nuevo = Math.max(0, Math.min(90, actual + delta));
+            input.value = nuevo;
+        }
+
+        function switchTab(tabName) {
+            const modTradicional = document.getElementById('modulo-tradicional');
+            const modFlex = document.getElementById('modulo-flex');
+            const btnTradicional = document.getElementById('tab-tradicional');
+            const btnFlex = document.getElementById('tab-flex');
+
+            if (tabName === 'tradicional') {
+                modTradicional.classList.remove('hidden');
+                modFlex.classList.add('hidden');
+                btnTradicional.className = "tab-active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200";
+                btnFlex.className = "tab-inactive w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200";
+            } else {
+                modTradicional.classList.add('hidden');
+                modFlex.classList.remove('hidden');
+                btnTradicional.className = "tab-inactive w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200";
+                btnFlex.className = "tab-active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200";
+            }
+        }
+
+        function limpiarDatos(tab) {
+            if (tab === 'tradicional') {
+                document.getElementById('factura-trad').value = '';
+                document.getElementById('servicio-trad').value = 'Hospitalización';
+                document.getElementById('deducible-trad').value = '200000';
+                document.getElementById('coaseguro-trad').value = '10|97000';
+                document.getElementById('extra-coaseguro-trad').value = '0';
+                
+                document.getElementById('error-trad').classList.add('hidden');
+                document.getElementById('resultados-trad').classList.add('hidden');
+                actualizarCamposTradicional();
+            } else if (tab === 'flex') {
+                document.getElementById('factura-flex').value = '';
+                document.getElementById('plan-flex').value = 'Set A';
+                document.getElementById('servicio-flex').value = 'Hospitalización';
+                document.getElementById('nivel-flex').value = 'A';
+                document.getElementById('num-consultas-flex').value = '1';
+                document.getElementById('extra-part-flex').value = '0';
+
+                document.getElementById('error-flex').classList.add('hidden');
+                document.getElementById('resultados-flex').classList.add('hidden');
+                actualizarCamposFlex();
+            }
+        }
+
+        function actualizarCamposTradicional() {
+            const servicio = document.getElementById('servicio-trad').value;
+            const contDeducible = document.getElementById('cont-deducible-trad');
+            const avisoCoaseguroDiez = document.getElementById('aviso-coaseguro-diez');
+            const selectCoaseguro = document.getElementById('coaseguro-trad');
+
+            if (servicio === 'Consulta Médica' || servicio === 'Gastos Fuera del Hospital') {
+                contDeducible.classList.add('hidden');
+                avisoCoaseguroDiez.classList.remove('hidden');
+                selectCoaseguro.classList.add('bg-indigo-50');
+            } else { 
+                contDeducible.classList.remove('hidden');
+                avisoCoaseguroDiez.classList.add('hidden');
+                selectCoaseguro.classList.remove('bg-indigo-50');
+            }
+        }
+
+        function calcularTradicional() {
+            document.getElementById('error-trad').classList.add('hidden');
+            
+            const inputFactura = document.getElementById('factura-trad').value.replace(/,/g, '');
+            const factura = parseFloat(inputFactura) || 0;
+            const servicio = document.getElementById('servicio-trad').value;
+            const extraPuntos = Math.max(0, parseFloat(document.getElementById('extra-coaseguro-trad').value) || 0);
+
+            if (factura <= 0) {
+                document.getElementById('error-trad').classList.remove('hidden');
+                document.getElementById('resultados-trad').classList.add('hidden');
+                return;
+            }
+
+            let pagoCliente = 0, deducibleAplicado = 0, coaseguroAplicado = 0, pagoSMNYL = 0;
+            let infoHTML = `<div class="bg-white rounded-xl p-6 border border-gray-200 shadow-md"><h4 class="text-lg font-bold text-gray-800 mb-6 text-center">Desglose del Cálculo (${servicio})</h4>`;
+
+            if (servicio === 'Consulta Médica' || servicio === 'Gastos Fuera del Hospital') {
+                const coaseguroData = document.getElementById('coaseguro-trad').value.split('|');
+                const topeCoaseguro = parseFloat(coaseguroData[1]);
+                
+                const basePct = 10;
+                const totalPct = Math.min(100, basePct + extraPuntos);
+                const porcentajeCoaseguro = totalPct / 100;
+
+                const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
+
+                document.getElementById('lbl-res-deducible').innerText = "Deducible/Franquicia:";
+                document.getElementById('lbl-res-coaseguro').innerText = `Coaseguro (${textoEtiquetaPct}):`;
+
+                deducibleAplicado = 0;
+                let coaseguroCalculado = factura * porcentajeCoaseguro;
+                coaseguroAplicado = Math.min(coaseguroCalculado, topeCoaseguro);
+                pagoCliente = coaseguroAplicado;
+                pagoSMNYL = factura - pagoCliente;
+
+                let textTope = coaseguroCalculado > topeCoaseguro
+                    ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Alcanzó el tope! Solo pagas ${mxnFormatter.format(topeCoaseguro)}</div>`
+                    : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeCoaseguro)}.</div>`;
+                
+                let detalleExtra = extraPuntos > 0 
+                    ? `Se calcula el ${totalPct}% (${basePct}% base + ${extraPuntos} pts adicionales) sobre el total.` 
+                    : `Se calcula el 10% de coaseguro directamente sobre el total.`;
+
+                infoHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">1</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Sin Deducible</p>
+                    <p class="text-xs text-gray-500 mb-3 leading-tight">Para este tipo de servicio no aplica cobro de deducible.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto flex items-center justify-center h-full min-h-[70px]">
+                        <span class="font-bold text-gray-400">DEDUCIBLE $0.00</span>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">2</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Aplica Coaseguro (${totalPct}%)</p>
+                    <p class="text-xs text-gray-500 mb-3 leading-tight">${detalleExtra}</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                        <div class="flex justify-between items-center text-orange-500 border-b border-gray-200 pb-2 mb-2"><span>x ${totalPct}%:</span> <span class="whitespace-nowrap">${mxnFormatter.format(coaseguroCalculado)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-gray-900"><span>= Coaseguro:</span> <span class="whitespace-nowrap">${mxnFormatter.format(coaseguroAplicado)}</span></div>
+                    </div>
+                    ${textTope}
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-orange-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">3</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Suma Cliente</p>
+                    <p class="text-xs text-gray-500 mb-3 leading-tight">Solo cubres el monto de coaseguro calculado.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Deducible:</span> <span class="whitespace-nowrap">$0.00</span></div>
+                        <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2"><span>+ Coaseguro:</span> <span class="whitespace-nowrap">${mxnFormatter.format(coaseguroAplicado)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-orange-600"><span>= Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-blue-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">4</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Suma Aseguradora</p>
+                    <p class="text-xs text-gray-500 mb-3 leading-tight">SMNYL cubre el monto restante de la factura.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                        <div class="flex justify-between items-center text-orange-600 border-b border-gray-200 pb-2 mb-2"><span>- Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-blue-600"><span>= SMNYL:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoSMNYL)}</span></div>
+                    </div>
+                </div>
+                </div>`;
+
+            } else {
+                // Hospitalización
+                const deducible = parseFloat(document.getElementById('deducible-trad').value);
+                const coaseguroData = document.getElementById('coaseguro-trad').value.split('|');
+                
+                const basePct = parseFloat(coaseguroData[0]);
+                const totalPct = Math.min(100, basePct + extraPuntos);
+                const porcentajeCoaseguro = totalPct / 100;
+                const topeCoaseguro = parseFloat(coaseguroData[1]);
+
+                const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
+
+                document.getElementById('lbl-res-deducible').innerText = "Deducible Contratado:";
+                document.getElementById('lbl-res-coaseguro').innerText = `Coaseguro (${textoEtiquetaPct}):`;
+
+                if (factura <= deducible) {
+                    pagoCliente = factura;
+                    deducibleAplicado = factura;
+                    
+                    infoHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                        <div class="absolute -top-4 -left-4 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow">!</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Monto inferior al Deducible</p>
+                        <p class="text-xs text-gray-600 mb-3">La factura no supera el deducible inicial contratado.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                            <div class="flex justify-between items-center text-red-500"><span>Deducible Contratado:</span> <span class="whitespace-nowrap">${mxnFormatter.format(deducible)}</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                        <div class="absolute -top-4 -left-4 bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow">2</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Total a Pagar</p>
+                        <p class="text-xs text-gray-600 mb-3">Debes cubrir el 100% de la factura médica.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center font-bold text-orange-600"><span>Tu Aportación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-blue-600 mt-2 pt-2 border-t border-gray-100"><span>SMNYL:</span> <span class="whitespace-nowrap">$0.00</span></div>
+                        </div>
+                    </div>
+                    </div>`;
+                } else {
+                    deducibleAplicado = deducible;
+                    let diferencia = factura - deducible;
+                    let coaseguroCalculado = diferencia * porcentajeCoaseguro;
+                    coaseguroAplicado = Math.min(coaseguroCalculado, topeCoaseguro);
+                    pagoCliente = deducibleAplicado + coaseguroAplicado;
+                    pagoSMNYL = factura - pagoCliente;
+
+                    let textTope = coaseguroCalculado > topeCoaseguro
+                        ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Alcanzó el tope! Solo pagas ${mxnFormatter.format(topeCoaseguro)}</div>`
+                        : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeCoaseguro)}.</div>`;
+                    
+                    let detalleExtra = extraPuntos > 0 
+                        ? `Se calcula el ${totalPct}% (${basePct}% contratado + ${extraPuntos} pts adicionales) sobre el remanente.` 
+                        : `Se calcula el ${totalPct}% sobre el remanente.`;
+
+                    infoHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">1</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Resta de Deducible</p>
+                        <p class="text-xs text-gray-500 mb-3 leading-tight">Al total se le resta tu cuota fija inicial.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                            <div class="flex justify-between items-center text-red-500 border-b border-gray-200 pb-2 mb-2"><span>- Deducible:</span> <span class="whitespace-nowrap">${mxnFormatter.format(deducibleAplicado)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-gray-900"><span>= Remanente:</span> <span class="whitespace-nowrap">${mxnFormatter.format(diferencia)}</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">2</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Aplica Coaseguro (${totalPct}%)</p>
+                        <p class="text-xs text-gray-500 mb-3 leading-tight">${detalleExtra}</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Remanente:</span> <span class="whitespace-nowrap">${mxnFormatter.format(diferencia)}</span></div>
+                            <div class="flex justify-between items-center text-orange-500 border-b border-gray-200 pb-2 mb-2"><span>x ${totalPct}%:</span> <span class="whitespace-nowrap">${mxnFormatter.format(coaseguroCalculado)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-gray-900"><span>= Coaseguro:</span> <span class="whitespace-nowrap">${mxnFormatter.format(coaseguroAplicado)}</span></div>
+                        </div>
+                        ${textTope}
+                    </div>
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-orange-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">3</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Suma Cliente</p>
+                        <p class="text-xs text-gray-500 mb-3 leading-tight">Tu aportación es el Deducible más el Coaseguro.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Deducible:</span> <span class="whitespace-nowrap">${mxnFormatter.format(deducibleAplicado)}</span></div>
+                            <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2"><span>+ Coaseguro:</span> <span class="whitespace-nowrap">${mxnFormatter.format(coaseguroAplicado)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-orange-600"><span>= Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-blue-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">4</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Suma Aseguradora</p>
+                        <p class="text-xs text-gray-500 mb-3 leading-tight">SMNYL cubre el resto de la factura.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                            <div class="flex justify-between items-center text-orange-600 border-b border-gray-200 pb-2 mb-2"><span>- Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-blue-600"><span>= SMNYL:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoSMNYL)}</span></div>
+                        </div>
+                    </div>
+                    </div>`;
+                }
+            }
+            
+            infoHTML += `</div>`;
+            document.getElementById('infografia-trad').innerHTML = infoHTML;
+
+            document.getElementById('res-total-cliente-trad').innerText = mxnFormatter.format(pagoCliente);
+            document.getElementById('res-deducible-trad').innerText = mxnFormatter.format(deducibleAplicado);
+            document.getElementById('res-coaseguro-trad').innerText = mxnFormatter.format(coaseguroAplicado);
+            document.getElementById('res-total-smnyl-trad').innerText = mxnFormatter.format(pagoSMNYL);
+            document.getElementById('res-factura-trad').innerText = mxnFormatter.format(factura);
+
+            document.getElementById('resultados-trad').classList.remove('hidden');
+            document.getElementById('resultados-trad').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        const alfaData = {
+            'Set A': {
+                'Servicios de Corta Estancia': { 'A': {copago: 7000, part: 0.10}, 'AA': {copago: 12000, part: 0.10}, 'AAA': {copago: 16000, part: 0.10}, 'Preferente': {copago: 23000, part: 0.20} },
+                'Hospitalización': { 'A': {copago: 10500, part: 0.10}, 'AA': {copago: 18500, part: 0.10}, 'AAA': {copago: 23000, part: 0.10}, 'Preferente': {copago: 35000, part: 0.20} }
+            },
+            'Set B': {
+                'Servicios de Corta Estancia': { 'A': {copago: 9500, part: 0.10}, 'AA': {copago: 19000, part: 0.10}, 'AAA': {copago: 27000, part: 0.10}, 'Preferente': {copago: 39000, part: 0.20} },
+                'Hospitalización': { 'A': {copago: 18500, part: 0.10}, 'AA': {copago: 34000, part: 0.10}, 'AAA': {copago: 45000, part: 0.10}, 'Preferente': {copago: 65000, part: 0.20} }
+            }
+        };
+
+        function actualizarCamposFlex() {
+            const servicio = document.getElementById('servicio-flex').value;
+            const selectNivel = document.getElementById('nivel-flex');
+            const labelNivel = document.getElementById('label-nivel');
+            const contConsultas = document.getElementById('contenedor-consultas-flex');
+            const contExtraPart = document.getElementById('contenedor-extra-part-flex');
+            
+            if (servicio === 'Consulta Médica') {
+                selectNivel.disabled = true;
+                selectNivel.classList.add('opacity-50', 'bg-gray-100');
+                labelNivel.classList.add('opacity-50');
+                contConsultas.classList.remove('hidden');
+                contExtraPart.classList.add('hidden');
+            } else if (servicio === 'Servicios Fuera del Hospital') {
+                selectNivel.disabled = true;
+                selectNivel.classList.add('opacity-50', 'bg-gray-100');
+                labelNivel.classList.add('opacity-50');
+                contConsultas.classList.add('hidden');
+                contExtraPart.classList.remove('hidden');
+            } else {
+                selectNivel.disabled = false;
+                selectNivel.classList.remove('opacity-50', 'bg-gray-100');
+                labelNivel.classList.remove('opacity-50');
+                contConsultas.classList.add('hidden');
+                contExtraPart.classList.remove('hidden');
+            }
+        }
+
+        function calcularFlex() {
+            document.getElementById('error-flex').classList.add('hidden');
+            
+            const inputFactura = document.getElementById('factura-flex').value.replace(/,/g, '');
+            const factura = parseFloat(inputFactura) || 0;
+            const plan = document.getElementById('plan-flex').value;
+            const servicio = document.getElementById('servicio-flex').value;
+            const nivel = document.getElementById('nivel-flex').value;
+            const extraPuntos = Math.max(0, parseFloat(document.getElementById('extra-part-flex').value) || 0);
+
+            if (factura <= 0) {
+                document.getElementById('error-flex').classList.remove('hidden');
+                document.getElementById('resultados-flex').classList.add('hidden');
+                return;
+            }
+
+            const topeParticipacion = plan === 'Set A' ? 85000 : 105000;
+
+            let pagoCliente = 0, copagoAplicado = 0, participacionAplicada = 0, pagoSMNYL = 0;
+            let partPorcentaje = 0, partCalculada = 0; 
+            let infoHTMLAlfa = `<div class="bg-white rounded-xl p-6 border border-gray-200 shadow-md"><h4 class="text-lg font-bold text-gray-800 mb-6 text-center">Desglose del Cálculo (${servicio})</h4>`;
+
+            if (servicio === 'Consulta Médica') {
+                let numConsultas = parseInt(document.getElementById('num-consultas-flex').value) || 1;
+                let copagoTotal = 700 * numConsultas;
+                
+                copagoAplicado = Math.min(factura, copagoTotal);
+                participacionAplicada = 0;
+                pagoCliente = copagoAplicado;
+                pagoSMNYL = factura - pagoCliente;
+                
+                document.getElementById('lbl-participacion-flex').innerText = "Participación (N/A):";
+
+                infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">1</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Cálculo de Copago</p>
+                    <p class="text-xs text-gray-600 mb-3">Se multiplica el no. de consultas por el copago ($700).</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Consultas:</span> <span class="whitespace-nowrap">${numConsultas}</span></div>
+                        <div class="flex justify-between items-center text-indigo-500 pb-2 mb-2 border-b border-gray-200"><span>x Copago:</span> <span class="whitespace-nowrap">$700.00</span></div>
+                        <div class="flex justify-between items-center font-bold text-indigo-600"><span>= Copago Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(copagoTotal)}</span></div>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">2</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Participación</p>
+                    <p class="text-xs text-gray-600 mb-3">Las consultas no generan un porcentaje de participación adicional.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto flex items-center justify-center h-full min-h-[70px]">
+                        <span class="font-bold text-gray-400">NO APLICA</span>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-indigo-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">3</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Total Cliente</p>
+                    <p class="text-xs text-gray-600 mb-3">Tu pago se limita al copago o al total de la factura.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                        <div class="flex justify-between items-center mb-1 border-b border-gray-200 pb-2"><span>Copago:</span> <span class="whitespace-nowrap">${mxnFormatter.format(copagoTotal)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-indigo-600 mt-2"><span>Tu Aportación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-blue-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">4</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Suma Aseguradora</p>
+                    <p class="text-xs text-gray-600 mb-3">SMNYL cubre la diferencia restante de la factura.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                        <div class="flex justify-between items-center text-indigo-600 border-b border-gray-200 pb-2 mb-2"><span>- Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-blue-600"><span>= SMNYL:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoSMNYL)}</span></div>
+                    </div>
+                </div>
+                </div>`;
+
+            } else if (servicio === 'Servicios Fuera del Hospital') {
+                copagoAplicado = 0;
+                const basePct = 35;
+                const totalPct = Math.min(100, basePct + extraPuntos);
+                partPorcentaje = totalPct / 100;
+
+                partCalculada = factura * partPorcentaje;
+                participacionAplicada = Math.min(partCalculada, topeParticipacion);
+                pagoCliente = participacionAplicada;
+                pagoSMNYL = factura - pagoCliente;
+
+                const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
+                document.getElementById('lbl-participacion-flex').innerText = `Participación (${textoEtiquetaPct}):`;
+
+                let badgeTope = partCalculada > topeParticipacion
+                    ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Tope aplicado! Solo pagas ${mxnFormatter.format(topeParticipacion)}</div>`
+                    : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeParticipacion)}.</div>`;
+
+                let detalleExtra = extraPuntos > 0 
+                    ? `Aplica el ${totalPct}% (${basePct}% base + ${extraPuntos} pts adicionales) directamente sobre la factura.` 
+                    : `Aplica el 35% de participación directamente sobre la factura.`;
+
+                infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">1</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Sin Copago Fijo</p>
+                    <p class="text-xs text-gray-600 mb-3">En servicios fuera del hospital no aplica copago inicial.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto flex items-center justify-center h-full min-h-[70px]">
+                        <span class="font-bold text-gray-400">COPAGO $0.00</span>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">2</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Participación (${totalPct}%)</p>
+                    <p class="text-xs text-gray-600 mb-3">${detalleExtra}</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                        <div class="flex justify-between items-center text-indigo-500 pb-2 mb-2 border-b border-gray-200"><span>x Participación:</span> <span class="whitespace-nowrap">${totalPct}%</span></div>
+                        <div class="flex justify-between items-center font-bold text-indigo-600"><span>= Participación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(partCalculada)}</span></div>
+                    </div>
+                    ${badgeTope}
+                </div>
+                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-indigo-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">3</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Total Cliente</p>
+                    <p class="text-xs text-gray-600 mb-3">Tu aportación se reduce a la participación generada.</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1 border-b border-gray-200 pb-2"><span>Participación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(participacionAplicada)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-indigo-600 mt-2"><span>Tu Aportación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 relative flex flex-col">
+                    <div class="absolute -top-3 -left-3 bg-blue-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">4</div>
+                    <p class="text-sm font-bold text-gray-800 mb-1">Suma Aseguradora</p>
+                    <p class="text-xs text-gray-600 mb-3">La aseguradora absorbe el resto de la factura (o más, si topaste).</p>
+                    <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                        <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                        <div class="flex justify-between items-center text-indigo-600 border-b border-gray-200 pb-2 mb-2"><span>- Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                        <div class="flex justify-between items-center font-bold text-blue-600"><span>= SMNYL:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoSMNYL)}</span></div>
+                    </div>
+                </div>
+                </div>`;
+            } else {
+                const regla = alfaData[plan][servicio][nivel];
+                const copagoRegla = regla.copago;
+                
+                const basePct = regla.part * 100;
+                const totalPct = Math.min(100, basePct + extraPuntos);
+                partPorcentaje = totalPct / 100;
+
+                const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
+                document.getElementById('lbl-participacion-flex').innerText = `Participación (${textoEtiquetaPct}):`;
+
+                if (factura <= copagoRegla) {
+                    copagoAplicado = factura;
+                    participacionAplicada = 0;
+                    pagoCliente = copagoAplicado;
+                    pagoSMNYL = 0;
+
+                    infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                        <div class="absolute -top-4 -left-4 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow">!</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Copago no superado</p>
+                        <p class="text-xs text-gray-600 mb-3">La factura es menor o igual al Copago Fijo del Nivel (${nivel}).</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-indigo-600 mt-2 border-t border-gray-100 pt-2"><span>Tu Aportación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                        <div class="absolute -top-4 -left-4 bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow">2</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Sin participación SMNYL</p>
+                        <p class="text-xs text-gray-600 mb-3">Al no superar el copago inicial, la aseguradora no aporta.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center font-bold text-blue-600"><span>Aportación SMNYL:</span> <span class="whitespace-nowrap">$0.00</span></div>
+                        </div>
+                    </div>
+                    </div>`;
+                } else {
+                    copagoAplicado = copagoRegla;
+                    let remanente = factura - copagoRegla;
+                    partCalculada = remanente * partPorcentaje;
+                    participacionAplicada = Math.min(partCalculada, topeParticipacion);
+                    pagoCliente = copagoAplicado + participacionAplicada;
+                    pagoSMNYL = factura - pagoCliente;
+
+                    let badgeTope = partCalculada > topeParticipacion
+                        ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Tope aplicado! Solo pagas ${mxnFormatter.format(topeParticipacion)}</div>`
+                        : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeParticipacion)}.</div>`;
+
+                    let detalleExtra = extraPuntos > 0 
+                        ? `Se calcula el ${totalPct}% (${basePct}% nivel + ${extraPuntos} pts adicionales) sobre el remanente.` 
+                        : `Se calcula el ${totalPct}% sobre el remanente.`;
+
+                    infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                    <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">1</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Resta de Copago</p>
+                        <p class="text-xs text-gray-600 mb-3 leading-tight">Según tu Nivel (${nivel}), se resta el Copago a la factura.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                            <div class="flex justify-between items-center text-indigo-500 border-b border-gray-200 pb-2 mb-2"><span>- Copago Fijo:</span> <span class="whitespace-nowrap">${mxnFormatter.format(copagoRegla)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-gray-900"><span>= Remanente:</span> <span class="whitespace-nowrap">${mxnFormatter.format(remanente)}</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">2</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Aplica Participación (${totalPct}%)</p>
+                        <p class="text-xs text-gray-600 mb-3 leading-tight">${detalleExtra}</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Remanente:</span> <span class="whitespace-nowrap">${mxnFormatter.format(remanente)}</span></div>
+                            <div class="flex justify-between items-center text-purple-500 border-b border-gray-200 pb-2 mb-2"><span>x ${totalPct}%:</span> <span class="whitespace-nowrap">${mxnFormatter.format(partCalculada)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-gray-900"><span>= Participación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(participacionAplicada)}</span></div>
+                        </div>
+                        ${badgeTope}
+                    </div>
+                    <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-indigo-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">3</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Suma Cliente</p>
+                        <p class="text-xs text-gray-600 mb-3 leading-tight">Se suma tu Copago más la Participación obtenida.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Copago Fijo:</span> <span class="whitespace-nowrap">${mxnFormatter.format(copagoAplicado)}</span></div>
+                            <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2"><span>+ Participación:</span> <span class="whitespace-nowrap">${mxnFormatter.format(participacionAplicada)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-indigo-600"><span>= Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
+                        <div class="absolute -top-3 -left-3 bg-blue-500 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold shadow text-sm">4</div>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Suma Aseguradora</p>
+                        <p class="text-xs text-gray-600 mb-3 leading-tight">SMNYL cubre todo el resto de la factura médica.</p>
+                        <div class="text-sm font-mono text-gray-700 bg-white p-3 rounded border border-gray-100 mt-auto">
+                            <div class="flex justify-between items-center mb-1"><span>Factura:</span> <span class="whitespace-nowrap">${mxnFormatter.format(factura)}</span></div>
+                            <div class="flex justify-between items-center text-indigo-600 border-b border-gray-200 pb-2 mb-2"><span>- Tu Total:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoCliente)}</span></div>
+                            <div class="flex justify-between items-center font-bold text-blue-600"><span>= SMNYL:</span> <span class="whitespace-nowrap">${mxnFormatter.format(pagoSMNYL)}</span></div>
+                        </div>
+                    </div>
+                    </div>`;
+                }
+            }
+
+            infoHTMLAlfa += `</div>`;
+            document.getElementById('infografia-flex').innerHTML = infoHTMLAlfa;
+            
+            document.getElementById('res-total-cliente-flex-val').innerText = mxnFormatter.format(pagoCliente);
+            document.getElementById('res-copago-flex').innerText = mxnFormatter.format(copagoAplicado);
+            document.getElementById('res-participacion-flex').innerText = mxnFormatter.format(participacionAplicada);
+            document.getElementById('res-total-smnyl-flex-val').innerText = mxnFormatter.format(pagoSMNYL);
+            document.getElementById('res-factura-flex-val').innerText = mxnFormatter.format(factura);
+
+            document.getElementById('resultados-flex').classList.remove('hidden');
+            document.getElementById('resultados-flex').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Inicializar estado de UI
+        actualizarCamposTradicional();
+        actualizarCamposFlex();
+    </script>
+</body>
+</html>
