@@ -55,10 +55,10 @@
         <!-- Navegación por Pestañas -->
         <div class="border-b border-gray-200 bg-gray-50">
             <nav class="flex -mb-px" aria-label="Tabs">
-                <button onclick="switchTab('tradicional')" id="tab-tradicional" class="tab-active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200">
+                <button type="button" onclick="switchTab('tradicional')" id="tab-tradicional" class="tab-active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200">
                     Alfa Medical Tradicional
                 </button>
-                <button onclick="switchTab('flex')" id="tab-flex" class="tab-inactive w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200">
+                <button type="button" onclick="switchTab('flex')" id="tab-flex" class="tab-inactive w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200">
                     Alfa Medical Flex
                 </button>
             </nav>
@@ -69,6 +69,25 @@
             <!-- MÓDULO TRADICIONAL -->
             <div id="modulo-tradicional" class="block space-y-6 animate-fade-in">
                 
+                <!-- Selector de Versión Medical Balance -->
+                <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <label for="check-medical-balance" class="flex items-center gap-3 cursor-pointer select-none">
+                        <input type="checkbox" id="check-medical-balance" onchange="toggleMedicalBalance()" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                        <div>
+                            <span class="block text-sm font-bold text-blue-900">Activar versión Medical Balance</span>
+                            <span class="block text-xs text-blue-700">Coaseguro fijo del 15% con tope de $103,000 y suma asegurada seleccionable.</span>
+                        </div>
+                    </label>
+
+                    <div id="cont-sa-balance" class="hidden sm:min-w-[230px] animate-fade-in">
+                        <label for="sa-balance" class="block text-xs font-semibold text-blue-900 mb-1">Suma Asegurada (Balance)</label>
+                        <select id="sa-balance" onchange="actualizarNotaSA()" class="block w-full px-3 py-2 text-sm border border-blue-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800 font-semibold bg-white shadow-sm">
+                            <option value="90000000" selected>$90,000,000 MXN</option>
+                            <option value="50000000">$50,000,000 MXN</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div>
                     <label for="factura-trad" class="block text-sm font-semibold text-gray-700 mb-2">Monto Total de la Factura Médica ($)</label>
                     <div class="relative">
@@ -100,11 +119,21 @@
                             <option value="53000">$ 53,000</option>
                             <option value="59000">$ 59,000</option>
                             <option value="65000">$ 65,000</option>
-                            <option value="77000">$ 77,000</option>
+                            <option value="79000">$ 79,000</option>
                             <option value="96000">$ 96,000</option>
                             <option value="109000">$ 109,000</option>
                             <option value="121000">$ 121,000</option>
                             <option value="200000" selected>$ 200,000</option>
+                            <option value="300000">$ 300,000</option>
+                            <option value="400000">$ 400,000</option>
+                            <option value="500000">$ 500,000</option>
+                            <option value="600000">$ 600,000</option>
+                            <option value="700000">$ 700,000</option>
+                            <option value="800000">$ 800,000</option>
+                            <option value="900000">$ 900,000</option>
+                            <option value="1000000">$ 1,000,000</option>
+                            <option value="3000000">$ 3,000,000</option>
+                            <option value="5000000">$ 5,000,000</option>
                         </select>
                     </div>
                 </div>
@@ -119,6 +148,9 @@
                             <option value="20|109000">20% - Tope: $109,000</option>
                             <option value="25|114000">25% - Tope: $114,000</option>
                         </select>
+                        <p id="aviso-balance" class="hidden text-xs text-blue-800 mt-2 font-medium bg-blue-50 p-2.5 rounded border border-blue-200">
+                            * Versión Medical Balance activa: Coaseguro base fijado en 15% con tope de $103,000.
+                        </p>
                         <p id="aviso-coaseguro-diez" class="hidden text-sm text-indigo-700 mt-2 font-medium bg-indigo-50 p-3 rounded border border-indigo-200">
                             * Nota: Para este servicio no aplica deducible. Se calculará internamente un 10% de coaseguro base (más puntos adicionales si se indican), respetando el tope seleccionado.
                         </p>
@@ -145,10 +177,10 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                    <button onclick="calcularTradicional()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                    <button type="button" onclick="calcularTradicional()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
                         Calcular Aportación
                     </button>
-                    <button onclick="limpiarDatos('tradicional')" class="sm:w-auto w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-sm">
+                    <button type="button" onclick="limpiarDatos('tradicional')" class="sm:w-auto w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-sm">
                         Limpiar Datos
                     </button>
                 </div>
@@ -159,7 +191,7 @@
                 </div>
 
                 <div id="resultados-trad" class="hidden mt-8 pt-6 border-t border-gray-200">
-                    <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">Resumen del Siniestro (Alfa Medical Tradicional)</h3>
+                    <h3 id="titulo-resultados-trad" class="text-xl font-bold text-gray-800 mb-6 text-center">Resumen del Siniestro (Alfa Medical Tradicional)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div class="bg-orange-50 rounded-xl p-5 border border-orange-100 shadow-sm">
                             <p class="text-sm font-semibold text-orange-800 uppercase tracking-wide mb-1">Aportación Cliente</p>
@@ -200,7 +232,7 @@
                                 <input type="text" id="asesor-pdf-trad" oninput="sincronizarAsesor(this.value)" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Ej. Fernando Martín">
                             </div>
                         </div>
-                        <button onclick="generarPDF('tradicional')" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-5 rounded-lg transition duration-200 shadow-md">
+                        <button type="button" onclick="generarPDF('tradicional')" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-5 rounded-lg transition duration-200 shadow-md">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -279,10 +311,10 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                    <button onclick="calcularFlex()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                    <button type="button" onclick="calcularFlex()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
                         Calcular Aportación
                     </button>
-                    <button onclick="limpiarDatos('flex')" class="sm:w-auto w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-sm">
+                    <button type="button" onclick="limpiarDatos('flex')" class="sm:w-auto w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-sm">
                         Limpiar Datos
                     </button>
                 </div>
@@ -334,7 +366,7 @@
                                 <input type="text" id="asesor-pdf-flex" oninput="sincronizarAsesor(this.value)" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Ej. Fernando Martín">
                             </div>
                         </div>
-                        <button onclick="generarPDF('flex')" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-5 rounded-lg transition duration-200 shadow-md">
+                        <button type="button" onclick="generarPDF('flex')" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-5 rounded-lg transition duration-200 shadow-md">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -349,10 +381,10 @@
 
         <div class="bg-gray-50 p-4 border-t border-gray-200 text-center w-full z-10 mt-auto">
             <p class="text-sm text-gray-600 flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Nota: La suma asegurada máxima institucional es de <strong class="text-gray-800">$170,000,000 MXN</strong>.
+                <span id="nota-suma-asegurada">Nota: La suma asegurada máxima institucional es de <strong class="text-gray-800">$170,000,000 MXN</strong>.</span>
             </p>
         </div>
     </div>
@@ -364,6 +396,7 @@
             minimumFractionDigits: 2
         });
 
+        let tabActual = 'tradicional';
         let ultimoCalculoTrad = null;
         let ultimoCalculoFlex = null;
 
@@ -401,7 +434,41 @@
             input.value = nuevo;
         }
 
+        function actualizarNotaSA() {
+            const notaEl = document.getElementById('nota-suma-asegurada');
+            const esBalance = document.getElementById('check-medical-balance').checked;
+            if (tabActual === 'tradicional' && esBalance) {
+                const saVal = document.getElementById('sa-balance').value;
+                const saTexto = saVal === '90000000' ? '$90,000,000 MXN' : '$50,000,000 MXN';
+                notaEl.innerHTML = `Nota: Suma asegurada seleccionada (Medical Balance): <strong class="text-blue-800">${saTexto}</strong>.`;
+            } else {
+                notaEl.innerHTML = `Nota: La suma asegurada máxima institucional es de <strong class="text-gray-800">$170,000,000 MXN</strong>.`;
+            }
+        }
+
+        function toggleMedicalBalance() {
+            const esBalance = document.getElementById('check-medical-balance').checked;
+            const contSA = document.getElementById('cont-sa-balance');
+            const selectCoaseguro = document.getElementById('coaseguro-trad');
+            const avisoBalance = document.getElementById('aviso-balance');
+
+            if (esBalance) {
+                contSA.classList.remove('hidden');
+                selectCoaseguro.value = '15|103000';
+                selectCoaseguro.disabled = true;
+                selectCoaseguro.classList.add('bg-gray-100', 'opacity-75', 'cursor-not-allowed');
+                avisoBalance.classList.remove('hidden');
+            } else {
+                contSA.classList.add('hidden');
+                selectCoaseguro.disabled = false;
+                selectCoaseguro.classList.remove('bg-gray-100', 'opacity-75', 'cursor-not-allowed');
+                avisoBalance.classList.add('hidden');
+            }
+            actualizarNotaSA();
+        }
+
         function switchTab(tabName) {
+            tabActual = tabName;
             const modTradicional = document.getElementById('modulo-tradicional');
             const modFlex = document.getElementById('modulo-flex');
             const btnTradicional = document.getElementById('tab-tradicional');
@@ -418,10 +485,15 @@
                 btnTradicional.className = "tab-inactive w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200";
                 btnFlex.className = "tab-active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm md:text-base transition-colors duration-200";
             }
+            actualizarNotaSA();
         }
 
         function limpiarDatos(tab) {
             if (tab === 'tradicional') {
+                document.getElementById('check-medical-balance').checked = false;
+                document.getElementById('sa-balance').value = '90000000';
+                toggleMedicalBalance();
+
                 document.getElementById('factura-trad').value = '';
                 document.getElementById('servicio-trad').value = 'Hospitalización';
                 document.getElementById('deducible-trad').value = '200000';
@@ -473,12 +545,20 @@
             const factura = parseFloat(inputFactura) || 0;
             const servicio = document.getElementById('servicio-trad').value;
             const extraPuntos = Math.max(0, parseFloat(document.getElementById('extra-coaseguro-trad').value) || 0);
+            const esBalance = document.getElementById('check-medical-balance').checked;
+            const saVal = document.getElementById('sa-balance').value;
+            const sumaAseguradaTexto = esBalance
+                ? (saVal === '90000000' ? '$90,000,000 MXN' : '$50,000,000 MXN')
+                : '$170,000,000 MXN';
+            const nombreModalidad = esBalance ? 'Alfa Medical Balance' : 'Alfa Medical Tradicional';
 
             if (factura <= 0) {
                 document.getElementById('error-trad').classList.remove('hidden');
                 document.getElementById('resultados-trad').classList.add('hidden');
                 return;
             }
+
+            document.getElementById('titulo-resultados-trad').innerText = `Resumen del Siniestro (${nombreModalidad})`;
 
             let pagoCliente = 0, deducibleAplicado = 0, coaseguroAplicado = 0, pagoSMNYL = 0;
             let infoHTML = `<div class="bg-white rounded-xl p-6 border border-gray-200 shadow-md"><h4 class="text-lg font-bold text-gray-800 mb-6 text-center">Desglose del Cálculo (${servicio})</h4>`;
@@ -491,7 +571,7 @@
             let concepto2Label = '';
 
             if (servicio === 'Consulta Médica' || servicio === 'Gastos Fuera del Hospital') {
-                const coaseguroData = document.getElementById('coaseguro-trad').value.split('|');
+                const coaseguroData = esBalance ? ['15', '103000'] : document.getElementById('coaseguro-trad').value.split('|');
                 const topeCoaseguro = parseFloat(coaseguroData[1]);
                 
                 const basePct = 10;
@@ -530,6 +610,9 @@
                     { label: 'Coaseguro Aplicado', value: textoEtiquetaPct },
                     { label: 'Tope de Coaseguro', value: mxnFormatter.format(topeCoaseguro) }
                 ];
+                if (esBalance) {
+                    pdfParametros.push({ label: 'Suma Asegurada', value: sumaAseguradaTexto });
+                }
 
                 pdfPasos = [
                     { num: '1', titulo: 'Sin Deducible', desc: 'Para este tipo de servicio no aplica cobro de deducible.', lineas: ['Deducible: $0.00'] },
@@ -583,7 +666,7 @@
             } else {
                 // Hospitalización
                 const deducible = parseFloat(document.getElementById('deducible-trad').value);
-                const coaseguroData = document.getElementById('coaseguro-trad').value.split('|');
+                const coaseguroData = esBalance ? ['15', '103000'] : document.getElementById('coaseguro-trad').value.split('|');
                 
                 const basePct = parseFloat(coaseguroData[0]);
                 const totalPct = Math.min(100, basePct + extraPuntos);
@@ -603,6 +686,9 @@
                     { label: 'Coaseguro Aplicado', value: textoEtiquetaPct },
                     { label: 'Tope de Coaseguro', value: mxnFormatter.format(topeCoaseguro) }
                 ];
+                if (esBalance) {
+                    pdfParametros.push({ label: 'Suma Asegurada', value: sumaAseguradaTexto });
+                }
 
                 if (factura <= deducible) {
                     pagoCliente = factura;
@@ -709,8 +795,10 @@
             }
             
             ultimoCalculoTrad = {
-                modalidad: 'Alfa Medical Tradicional',
-                acentoRGB: [234, 88, 12], // Naranja corporativo
+                modalidad: nombreModalidad,
+                esBalance,
+                sumaAsegurada: sumaAseguradaTexto,
+                acentoRGB: [234, 88, 12],
                 acentoClaroRGB: [255, 247, 237],
                 acentoBordeRGB: [254, 215, 170],
                 servicio,
@@ -1081,7 +1169,9 @@
 
             ultimoCalculoFlex = {
                 modalidad: 'Alfa Medical Flex',
-                acentoRGB: [79, 70, 229], // Índigo corporativo
+                esBalance: false,
+                sumaAsegurada: '$170,000,000 MXN',
+                acentoRGB: [79, 70, 229],
                 acentoClaroRGB: [238, 242, 255],
                 acentoBordeRGB: [199, 210, 254],
                 servicio,
@@ -1115,10 +1205,15 @@
             const datos = tipo === 'tradicional' ? ultimoCalculoTrad : ultimoCalculoFlex;
             if (!datos) return;
 
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert('No se pudo cargar la librería de PDF. Verifica tu conexión a internet y recarga la página.');
+                return;
+            }
+
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-            const pageWidth = doc.internal.pageSize.getWidth(); // 215.9 mm
-            const pageHeight = doc.internal.pageSize.getHeight(); // 279.4 mm
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
             const margin = 16;
             const contentWidth = pageWidth - margin * 2;
 
@@ -1130,9 +1225,9 @@
             const fechaArchivo = hoy.toISOString().slice(0, 10);
 
             // 1. HEADER CORPORATIVO
-            doc.setFillColor(30, 58, 138); // Azul marino oscuro
+            doc.setFillColor(30, 58, 138);
             doc.rect(0, 0, pageWidth, 34, 'F');
-            doc.setFillColor(37, 99, 235); // Franja azul brillante inferior
+            doc.setFillColor(37, 99, 235);
             doc.rect(0, 34, pageWidth, 2.5, 'F');
 
             doc.setTextColor(255, 255, 255);
@@ -1149,52 +1244,55 @@
             doc.setTextColor(191, 219, 254);
             doc.text(`Emitido el ${fechaTexto}`, pageWidth - margin, 15, { align: 'right' });
 
-            let y = 43;
+            let y = 42;
 
-            // 2. FRANJA DE CLIENTE / ASESOR (Si hay datos)
+            // 2. FRANJA DE CLIENTE / ASESOR
             if (nombreCliente || nombreAsesor) {
                 doc.setFillColor(248, 250, 252);
                 doc.setDrawColor(226, 232, 240);
-                doc.roundedRect(margin, y, contentWidth, 12, 2, 2, 'FD');
+                doc.roundedRect(margin, y, contentWidth, 11, 2, 2, 'FD');
 
                 doc.setFontSize(9);
                 if (nombreCliente) {
                     doc.setFont('helvetica', 'bold');
                     doc.setTextColor(71, 85, 105);
-                    doc.text('Preparado para:', margin + 4, y + 7.5);
+                    doc.text('Preparado para:', margin + 4, y + 7);
                     doc.setFont('helvetica', 'normal');
                     doc.setTextColor(15, 23, 42);
-                    doc.text(nombreCliente, margin + 31, y + 7.5);
+                    doc.text(nombreCliente, margin + 31, y + 7);
                 }
                 if (nombreAsesor) {
                     doc.setFont('helvetica', 'bold');
                     doc.setTextColor(71, 85, 105);
                     const xAsesor = nombreCliente ? pageWidth / 2 + 4 : margin + 4;
-                    doc.text('Asesor:', xAsesor, y + 7.5);
+                    doc.text('Asesor:', xAsesor, y + 7);
                     doc.setFont('helvetica', 'normal');
                     doc.setTextColor(15, 23, 42);
-                    doc.text(nombreAsesor, xAsesor + 14, y + 7.5);
+                    doc.text(nombreAsesor, xAsesor + 14, y + 7);
                 }
-                y += 17;
+                y += 15;
             }
 
             // 3. PARÁMETROS DEL ESCENARIO
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10.5);
+            doc.setFontSize(10);
             doc.setTextColor(30, 41, 59);
             doc.text('PARÁMETROS DEL ESCENARIO SIMULADO', margin, y);
             y += 3;
 
+            const paramRows = Math.ceil(datos.parametros.length / 2);
+            const paramBoxH = 5 + paramRows * 8.5;
+
             doc.setFillColor(248, 250, 252);
             doc.setDrawColor(226, 232, 240);
-            doc.roundedRect(margin, y, contentWidth, 24, 2.5, 2.5, 'FD');
+            doc.roundedRect(margin, y, contentWidth, paramBoxH, 2.5, 2.5, 'FD');
 
             const colWidth = contentWidth / 2;
             datos.parametros.forEach((p, idx) => {
                 const col = idx % 2;
                 const row = Math.floor(idx / 2);
                 const px = margin + 5 + col * colWidth;
-                const py = y + 8 + row * 10;
+                const py = y + 7 + row * 8.5;
 
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(8.5);
@@ -1202,21 +1300,20 @@
                 doc.text(`${p.label}:`, px, py);
 
                 doc.setFont('helvetica', 'bold');
-                doc.setFontSize(9.5);
+                doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 doc.text(String(p.value), px + 36, py);
             });
 
-            y += 31;
+            y += paramBoxH + 6;
 
-            // 4. TARJETAS KPI PRINCIPALES (Aportación Cliente vs SMNYL)
+            // 4. TARJETAS KPI PRINCIPALES
             const cardGap = 6;
             const cardW = (contentWidth - cardGap) / 2;
-            const cardH = 38;
+            const cardH = 36;
             const pctCliente = datos.factura > 0 ? (datos.pagoCliente / datos.factura) * 100 : 0;
             const pctSMNYL = datos.factura > 0 ? (datos.pagoSMNYL / datos.factura) * 100 : 0;
 
-            // Tarjeta Cliente
             doc.setFillColor(...datos.acentoClaroRGB);
             doc.setDrawColor(...datos.acentoBordeRGB);
             doc.roundedRect(margin, y, cardW, cardH, 3, 3, 'FD');
@@ -1224,28 +1321,27 @@
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8.5);
             doc.setTextColor(...datos.acentoRGB);
-            doc.text('APORTACIÓN DEL CLIENTE', margin + 5, y + 7);
-            doc.text(`${pctCliente.toFixed(1)}%`, margin + cardW - 5, y + 7, { align: 'right' });
+            doc.text('APORTACIÓN DEL CLIENTE', margin + 5, y + 6.5);
+            doc.text(`${pctCliente.toFixed(1)}%`, margin + cardW - 5, y + 6.5, { align: 'right' });
 
-            doc.setFontSize(18);
-            doc.text(mxnFormatter.format(datos.pagoCliente), margin + 5, y + 17);
+            doc.setFontSize(17);
+            doc.text(mxnFormatter.format(datos.pagoCliente), margin + 5, y + 16);
 
             doc.setDrawColor(...datos.acentoBordeRGB);
-            doc.line(margin + 5, y + 21, margin + cardW - 5, y + 21);
+            doc.line(margin + 5, y + 19.5, margin + cardW - 5, y + 19.5);
 
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(8.5);
             doc.setTextColor(51, 65, 85);
-            doc.text(`${datos.concepto1Label}:`, margin + 5, y + 27);
+            doc.text(`${datos.concepto1Label}:`, margin + 5, y + 25.5);
             doc.setFont('helvetica', 'bold');
-            doc.text(mxnFormatter.format(datos.concepto1Val), margin + cardW - 5, y + 27, { align: 'right' });
+            doc.text(mxnFormatter.format(datos.concepto1Val), margin + cardW - 5, y + 25.5, { align: 'right' });
 
             doc.setFont('helvetica', 'normal');
-            doc.text(`${datos.concepto2Label}:`, margin + 5, y + 33);
+            doc.text(`${datos.concepto2Label}:`, margin + 5, y + 31.5);
             doc.setFont('helvetica', 'bold');
-            doc.text(mxnFormatter.format(datos.concepto2Val), margin + cardW - 5, y + 33, { align: 'right' });
+            doc.text(mxnFormatter.format(datos.concepto2Val), margin + cardW - 5, y + 31.5, { align: 'right' });
 
-            // Tarjeta SMNYL
             const rightCardX = margin + cardW + cardGap;
             doc.setFillColor(239, 246, 255);
             doc.setDrawColor(191, 219, 254);
@@ -1254,38 +1350,37 @@
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8.5);
             doc.setTextColor(37, 99, 235);
-            doc.text('APORTACIÓN SMNYL', rightCardX + 5, y + 7);
-            doc.text(`${pctSMNYL.toFixed(1)}%`, rightCardX + cardW - 5, y + 7, { align: 'right' });
+            doc.text('APORTACIÓN SMNYL', rightCardX + 5, y + 6.5);
+            doc.text(`${pctSMNYL.toFixed(1)}%`, rightCardX + cardW - 5, y + 6.5, { align: 'right' });
 
-            doc.setFontSize(18);
-            doc.text(mxnFormatter.format(datos.pagoSMNYL), rightCardX + 5, y + 17);
+            doc.setFontSize(17);
+            doc.text(mxnFormatter.format(datos.pagoSMNYL), rightCardX + 5, y + 16);
 
             doc.setDrawColor(191, 219, 254);
-            doc.line(rightCardX + 5, y + 21, rightCardX + cardW - 5, y + 21);
+            doc.line(rightCardX + 5, y + 19.5, rightCardX + cardW - 5, y + 19.5);
 
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(8.5);
             doc.setTextColor(51, 65, 85);
-            doc.text('Monto Total de la Factura:', rightCardX + 5, y + 29);
+            doc.text('Monto Total de la Factura:', rightCardX + 5, y + 28);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(10);
             doc.setTextColor(15, 23, 42);
-            doc.text(mxnFormatter.format(datos.factura), rightCardX + cardW - 5, y + 29, { align: 'right' });
+            doc.text(mxnFormatter.format(datos.factura), rightCardX + cardW - 5, y + 28, { align: 'right' });
 
-            y += cardH + 9;
+            y += cardH + 8;
 
-            // 5. GRÁFICA VISUAL DE DISTRIBUCIÓN (Barra Dinámica)
+            // 5. GRÁFICA VISUAL DE DISTRIBUCIÓN
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(9.5);
             doc.setTextColor(30, 41, 59);
             doc.text('DISTRIBUCIÓN VISUAL DE LA FACTURA', margin, y);
             y += 3.5;
 
-            const barH = 9;
+            const barH = 8.5;
             const clienteW = (contentWidth * pctCliente) / 100;
             const smnylW = contentWidth - clienteW;
 
-            // Fondo base
             doc.setFillColor(226, 232, 240);
             doc.roundedRect(margin, y, contentWidth, barH, 2, 2, 'F');
 
@@ -1298,18 +1393,16 @@
                 doc.rect(margin + clienteW, y, smnylW, barH, 'F');
             }
 
-            // Etiquetas dentro de la barra si hay espacio suficiente
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8);
             doc.setTextColor(255, 255, 255);
             if (pctCliente >= 16) {
-                doc.text(`Cliente ${pctCliente.toFixed(1)}%`, margin + clienteW / 2, y + 6, { align: 'center' });
+                doc.text(`Cliente ${pctCliente.toFixed(1)}%`, margin + clienteW / 2, y + 5.7, { align: 'center' });
             }
             if (pctSMNYL >= 16) {
-                doc.text(`SMNYL ${pctSMNYL.toFixed(1)}%`, margin + clienteW + smnylW / 2, y + 6, { align: 'center' });
+                doc.text(`SMNYL ${pctSMNYL.toFixed(1)}%`, margin + clienteW + smnylW / 2, y + 5.7, { align: 'center' });
             }
 
-            // Leyenda debajo de la barra
             y += barH + 5;
             doc.setFillColor(...datos.acentoRGB);
             doc.circle(margin + 2, y - 1, 1.5, 'F');
@@ -1322,65 +1415,61 @@
             doc.circle(margin + contentWidth / 2 + 2, y - 1, 1.5, 'F');
             doc.text(`SMNYL: ${mxnFormatter.format(datos.pagoSMNYL)} (${pctSMNYL.toFixed(1)}%)`, margin + contentWidth / 2 + 6, y);
 
-            y += 9;
+            y += 8;
 
-            // 6. DESGLOSE PASO A PASO (Cuadrícula limpia)
+            // 6. DESGLOSE PASO A PASO
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10.5);
+            doc.setFontSize(10);
             doc.setTextColor(30, 41, 59);
             doc.text('DESGLOSE PASO A PASO DEL CÁLCULO', margin, y);
             y += 4;
 
             const stepW = (contentWidth - cardGap) / 2;
-            const stepH = 34;
+            const stepH = 33;
 
             datos.pasos.forEach((paso, i) => {
                 const col = i % 2;
                 const row = Math.floor(i / 2);
                 const sx = margin + col * (stepW + cardGap);
-                const sy = y + row * (stepH + 5);
+                const sy = y + row * (stepH + 4.5);
 
                 doc.setFillColor(255, 255, 255);
                 doc.setDrawColor(203, 213, 225);
                 doc.roundedRect(sx, sy, stepW, stepH, 2.5, 2.5, 'FD');
 
-                // Badge circular numerado
                 const badgeColor = paso.num === '3' ? datos.acentoRGB : (paso.num === '!' ? [220, 38, 38] : [37, 99, 235]);
                 doc.setFillColor(...badgeColor);
-                doc.circle(sx + 6.5, sy + 6.5, 3.5, 'F');
+                doc.circle(sx + 6.5, sy + 6.5, 3.3, 'F');
                 doc.setTextColor(255, 255, 255);
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(8.5);
                 doc.text(paso.num, sx + 6.5, sy + 7.5, { align: 'center' });
 
-                // Título del paso
                 doc.setTextColor(15, 23, 42);
                 doc.setFontSize(9.5);
-                doc.text(paso.titulo, sx + 12.5, sy + 7.5);
+                doc.text(paso.titulo, sx + 12, sy + 7.5);
 
-                // Descripción corta
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(7.5);
                 doc.setTextColor(100, 116, 139);
                 const descLines = doc.splitTextToSize(paso.desc, stepW - 9);
-                doc.text(descLines.slice(0, 2), sx + 4.5, sy + 13.5);
+                doc.text(descLines.slice(0, 2), sx + 4.5, sy + 13);
 
-                // Líneas matemáticas
-                let ly = sy + 21.5;
+                let ly = sy + 20.5;
                 paso.lineas.forEach((linea, lIdx) => {
                     const esUltima = lIdx === paso.lineas.length - 1;
                     doc.setFont('helvetica', esUltima ? 'bold' : 'normal');
                     doc.setFontSize(8.5);
                     doc.setTextColor(esUltima ? 15 : 71, esUltima ? 23 : 85, esUltima ? 42 : 105);
                     doc.text(linea, sx + 4.5, ly);
-                    ly += 4.3;
+                    ly += 4.2;
                 });
             });
 
             const numRows = Math.ceil(datos.pasos.length / 2);
-            y += numRows * (stepH + 5) + 2;
+            y += numRows * (stepH + 4.5) + 1.5;
 
-            // 7. AVISO DE TOPE (Si aplica)
+            // 7. AVISO DE TOPE
             if (datos.topeNota) {
                 if (datos.topeAlcanzado) {
                     doc.setFillColor(254, 242, 242);
@@ -1391,21 +1480,24 @@
                     doc.setDrawColor(134, 239, 172);
                     doc.setTextColor(21, 128, 61);
                 }
-                doc.roundedRect(margin, y, contentWidth, 10, 2, 2, 'FD');
+                doc.roundedRect(margin, y, contentWidth, 9.5, 2, 2, 'FD');
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(8.5);
-                doc.text(datos.topeNota, pageWidth / 2, y + 6.3, { align: 'center' });
+                doc.text(datos.topeNota, pageWidth / 2, y + 6, { align: 'center' });
             }
 
             // 8. FOOTER INSTITUCIONAL Y AVISO LEGAL
-            const footerY = pageHeight - 20;
+            const footerY = pageHeight - 19;
             doc.setDrawColor(203, 213, 225);
             doc.line(margin, footerY, pageWidth - margin, footerY);
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8);
             doc.setTextColor(51, 65, 85);
-            doc.text('Suma asegurada máxima institucional: $170,000,000 MXN.', pageWidth / 2, footerY + 5, { align: 'center' });
+            const textoFooterSA = datos.esBalance
+                ? `Suma asegurada seleccionada (${datos.modalidad}): ${datos.sumaAsegurada}.`
+                : `Suma asegurada máxima institucional: ${datos.sumaAsegurada}.`;
+            doc.text(textoFooterSA, pageWidth / 2, footerY + 5, { align: 'center' });
 
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(7.5);
@@ -1417,8 +1509,9 @@
                 { align: 'center', maxWidth: contentWidth }
             );
 
-            // Nombre dinámico del archivo
-            const slugTipo = tipo === 'tradicional' ? 'AlfaMedical' : 'AlfaMedicalFlex';
+            const slugTipo = tipo === 'tradicional'
+                ? (datos.esBalance ? 'AlfaMedicalBalance' : 'AlfaMedical')
+                : 'AlfaMedicalFlex';
             const slugCliente = nombreCliente
                 ? '_' + nombreCliente.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '_')
                 : '';
@@ -1426,6 +1519,7 @@
         }
 
         // Inicializar estado de UI
+        toggleMedicalBalance();
         actualizarCamposTradicional();
         actualizarCamposFlex();
         cargarAsesorGuardado();
