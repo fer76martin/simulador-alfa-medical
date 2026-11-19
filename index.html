@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Gastos Médicos - SMNYL</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -180,6 +181,32 @@
                     </div>
                     
                     <div id="infografia-trad" class="mt-6 w-full animate-fade-in"></div>
+
+                    <!-- Panel de Exportación a PDF (Tradicional) -->
+                    <div class="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Compartir Estudio con Cliente (PDF)</h4>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label for="cliente-pdf-trad" class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Cliente (Opcional)</label>
+                                <input type="text" id="cliente-pdf-trad" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Ej. Carlos Mendoza">
+                            </div>
+                            <div>
+                                <label for="asesor-pdf-trad" class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Asesor (Opcional)</label>
+                                <input type="text" id="asesor-pdf-trad" oninput="sincronizarAsesor(this.value)" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Ej. Fernando Martín">
+                            </div>
+                        </div>
+                        <button onclick="generarPDF('tradicional')" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-5 rounded-lg transition duration-200 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Descargar Estudio en PDF
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -289,6 +316,32 @@
 
                     <div id="infografia-flex" class="mt-6 w-full animate-fade-in"></div>
 
+                    <!-- Panel de Exportación a PDF (Flex) -->
+                    <div class="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Compartir Estudio con Cliente (PDF)</h4>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label for="cliente-pdf-flex" class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Cliente (Opcional)</label>
+                                <input type="text" id="cliente-pdf-flex" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Ej. Carlos Mendoza">
+                            </div>
+                            <div>
+                                <label for="asesor-pdf-flex" class="block text-xs font-semibold text-gray-600 mb-1">Nombre del Asesor (Opcional)</label>
+                                <input type="text" id="asesor-pdf-flex" oninput="sincronizarAsesor(this.value)" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Ej. Fernando Martín">
+                            </div>
+                        </div>
+                        <button onclick="generarPDF('flex')" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-5 rounded-lg transition duration-200 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Descargar Estudio en PDF
+                        </button>
+                    </div>
+
                 </div>
             </div>
 
@@ -310,6 +363,26 @@
             currency: 'MXN',
             minimumFractionDigits: 2
         });
+
+        let ultimoCalculoTrad = null;
+        let ultimoCalculoFlex = null;
+
+        function sincronizarAsesor(nombre) {
+            try {
+                localStorage.setItem('smnyl_nombre_asesor', nombre);
+            } catch (e) {}
+            const inputTrad = document.getElementById('asesor-pdf-trad');
+            const inputFlex = document.getElementById('asesor-pdf-flex');
+            if (inputTrad && inputTrad.value !== nombre) inputTrad.value = nombre;
+            if (inputFlex && inputFlex.value !== nombre) inputFlex.value = nombre;
+        }
+
+        function cargarAsesorGuardado() {
+            try {
+                const guardado = localStorage.getItem('smnyl_nombre_asesor');
+                if (guardado) sincronizarAsesor(guardado);
+            } catch (e) {}
+        }
 
         function formatearEntrada(input) {
             let valor = input.value.replace(/\D/g, "");
@@ -354,6 +427,8 @@
                 document.getElementById('deducible-trad').value = '200000';
                 document.getElementById('coaseguro-trad').value = '10|97000';
                 document.getElementById('extra-coaseguro-trad').value = '0';
+                document.getElementById('cliente-pdf-trad').value = '';
+                ultimoCalculoTrad = null;
                 
                 document.getElementById('error-trad').classList.add('hidden');
                 document.getElementById('resultados-trad').classList.add('hidden');
@@ -365,6 +440,8 @@
                 document.getElementById('nivel-flex').value = 'A';
                 document.getElementById('num-consultas-flex').value = '1';
                 document.getElementById('extra-part-flex').value = '0';
+                document.getElementById('cliente-pdf-flex').value = '';
+                ultimoCalculoFlex = null;
 
                 document.getElementById('error-flex').classList.add('hidden');
                 document.getElementById('resultados-flex').classList.add('hidden');
@@ -406,6 +483,13 @@
             let pagoCliente = 0, deducibleAplicado = 0, coaseguroAplicado = 0, pagoSMNYL = 0;
             let infoHTML = `<div class="bg-white rounded-xl p-6 border border-gray-200 shadow-md"><h4 class="text-lg font-bold text-gray-800 mb-6 text-center">Desglose del Cálculo (${servicio})</h4>`;
 
+            let pdfParametros = [];
+            let pdfPasos = [];
+            let pdfTopeNota = null;
+            let pdfTopeAlcanzado = false;
+            let concepto1Label = '';
+            let concepto2Label = '';
+
             if (servicio === 'Consulta Médica' || servicio === 'Gastos Fuera del Hospital') {
                 const coaseguroData = document.getElementById('coaseguro-trad').value.split('|');
                 const topeCoaseguro = parseFloat(coaseguroData[1]);
@@ -416,6 +500,8 @@
 
                 const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
 
+                concepto1Label = "Deducible / Franquicia";
+                concepto2Label = `Coaseguro (${textoEtiquetaPct})`;
                 document.getElementById('lbl-res-deducible').innerText = "Deducible/Franquicia:";
                 document.getElementById('lbl-res-coaseguro').innerText = `Coaseguro (${textoEtiquetaPct}):`;
 
@@ -425,13 +511,32 @@
                 pagoCliente = coaseguroAplicado;
                 pagoSMNYL = factura - pagoCliente;
 
-                let textTope = coaseguroCalculado > topeCoaseguro
+                pdfTopeAlcanzado = coaseguroCalculado > topeCoaseguro;
+                pdfTopeNota = pdfTopeAlcanzado
+                    ? `Alcanzó el tope de coaseguro. Solo pagas ${mxnFormatter.format(topeCoaseguro)}.`
+                    : `No rebasó el tope de coaseguro (${mxnFormatter.format(topeCoaseguro)}).`;
+
+                let textTope = pdfTopeAlcanzado
                     ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Alcanzó el tope! Solo pagas ${mxnFormatter.format(topeCoaseguro)}</div>`
                     : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeCoaseguro)}.</div>`;
                 
                 let detalleExtra = extraPuntos > 0 
                     ? `Se calcula el ${totalPct}% (${basePct}% base + ${extraPuntos} pts adicionales) sobre el total.` 
                     : `Se calcula el 10% de coaseguro directamente sobre el total.`;
+
+                pdfParametros = [
+                    { label: 'Tipo de Servicio', value: servicio },
+                    { label: 'Deducible Aplicable', value: 'No aplica ($0.00)' },
+                    { label: 'Coaseguro Aplicado', value: textoEtiquetaPct },
+                    { label: 'Tope de Coaseguro', value: mxnFormatter.format(topeCoaseguro) }
+                ];
+
+                pdfPasos = [
+                    { num: '1', titulo: 'Sin Deducible', desc: 'Para este tipo de servicio no aplica cobro de deducible.', lineas: ['Deducible: $0.00'] },
+                    { num: '2', titulo: `Aplica Coaseguro (${totalPct}%)`, desc: detalleExtra, lineas: [`Factura: ${mxnFormatter.format(factura)}`, `x ${totalPct}% = ${mxnFormatter.format(coaseguroCalculado)}`, `Coaseguro Aplicado: ${mxnFormatter.format(coaseguroAplicado)}`] },
+                    { num: '3', titulo: 'Aportación Cliente', desc: 'Solo cubres el monto de coaseguro calculado.', lineas: ['Deducible: $0.00', `+ Coaseguro: ${mxnFormatter.format(coaseguroAplicado)}`, `Total Cliente: ${mxnFormatter.format(pagoCliente)}`] },
+                    { num: '4', titulo: 'Aportación SMNYL', desc: 'SMNYL cubre el monto restante de la factura.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Total Cliente: ${mxnFormatter.format(pagoCliente)}`, `Total SMNYL: ${mxnFormatter.format(pagoSMNYL)}`] }
+                ];
 
                 infoHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                 <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
@@ -487,13 +592,28 @@
 
                 const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
 
+                concepto1Label = "Deducible Contratado";
+                concepto2Label = `Coaseguro (${textoEtiquetaPct})`;
                 document.getElementById('lbl-res-deducible').innerText = "Deducible Contratado:";
                 document.getElementById('lbl-res-coaseguro').innerText = `Coaseguro (${textoEtiquetaPct}):`;
+
+                pdfParametros = [
+                    { label: 'Tipo de Servicio', value: servicio },
+                    { label: 'Deducible Contratado', value: mxnFormatter.format(deducible) },
+                    { label: 'Coaseguro Aplicado', value: textoEtiquetaPct },
+                    { label: 'Tope de Coaseguro', value: mxnFormatter.format(topeCoaseguro) }
+                ];
 
                 if (factura <= deducible) {
                     pagoCliente = factura;
                     deducibleAplicado = factura;
+                    pagoSMNYL = 0;
                     
+                    pdfPasos = [
+                        { num: '!', titulo: 'Monto Inferior al Deducible', desc: 'La factura no supera el deducible inicial contratado.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `Deducible Contratado: ${mxnFormatter.format(deducible)}`] },
+                        { num: '2', titulo: 'Total a Pagar', desc: 'El asegurado cubre el 100% de la factura médica.', lineas: [`Aportación Cliente: ${mxnFormatter.format(pagoCliente)}`, 'Aportación SMNYL: $0.00'] }
+                    ];
+
                     infoHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
                         <div class="absolute -top-4 -left-4 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow">!</div>
@@ -522,13 +642,25 @@
                     pagoCliente = deducibleAplicado + coaseguroAplicado;
                     pagoSMNYL = factura - pagoCliente;
 
-                    let textTope = coaseguroCalculado > topeCoaseguro
+                    pdfTopeAlcanzado = coaseguroCalculado > topeCoaseguro;
+                    pdfTopeNota = pdfTopeAlcanzado
+                        ? `Alcanzó el tope de coaseguro. Solo pagas ${mxnFormatter.format(topeCoaseguro)}.`
+                        : `No rebasó el tope de coaseguro (${mxnFormatter.format(topeCoaseguro)}).`;
+
+                    let textTope = pdfTopeAlcanzado
                         ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Alcanzó el tope! Solo pagas ${mxnFormatter.format(topeCoaseguro)}</div>`
                         : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeCoaseguro)}.</div>`;
                     
                     let detalleExtra = extraPuntos > 0 
                         ? `Se calcula el ${totalPct}% (${basePct}% contratado + ${extraPuntos} pts adicionales) sobre el remanente.` 
                         : `Se calcula el ${totalPct}% sobre el remanente.`;
+
+                    pdfPasos = [
+                        { num: '1', titulo: 'Resta de Deducible', desc: 'Al total de la factura se le resta el deducible contratado.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Deducible: ${mxnFormatter.format(deducibleAplicado)}`, `Remanente: ${mxnFormatter.format(diferencia)}`] },
+                        { num: '2', titulo: `Aplica Coaseguro (${totalPct}%)`, desc: detalleExtra, lineas: [`Remanente: ${mxnFormatter.format(diferencia)}`, `x ${totalPct}% = ${mxnFormatter.format(coaseguroCalculado)}`, `Coaseguro Aplicado: ${mxnFormatter.format(coaseguroAplicado)}`] },
+                        { num: '3', titulo: 'Aportación Cliente', desc: 'Tu aportación es el Deducible más el Coaseguro.', lineas: [`Deducible: ${mxnFormatter.format(deducibleAplicado)}`, `+ Coaseguro: ${mxnFormatter.format(coaseguroAplicado)}`, `Total Cliente: ${mxnFormatter.format(pagoCliente)}`] },
+                        { num: '4', titulo: 'Aportación SMNYL', desc: 'SMNYL cubre el resto de la factura médica.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Total Cliente: ${mxnFormatter.format(pagoCliente)}`, `Total SMNYL: ${mxnFormatter.format(pagoSMNYL)}`] }
+                    ];
 
                     infoHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                     <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 relative flex flex-col">
@@ -576,6 +708,25 @@
                 }
             }
             
+            ultimoCalculoTrad = {
+                modalidad: 'Alfa Medical Tradicional',
+                acentoRGB: [234, 88, 12], // Naranja corporativo
+                acentoClaroRGB: [255, 247, 237],
+                acentoBordeRGB: [254, 215, 170],
+                servicio,
+                factura,
+                pagoCliente,
+                pagoSMNYL,
+                concepto1Label,
+                concepto1Val: deducibleAplicado,
+                concepto2Label,
+                concepto2Val: coaseguroAplicado,
+                parametros: pdfParametros,
+                pasos: pdfPasos,
+                topeNota: pdfTopeNota,
+                topeAlcanzado: pdfTopeAlcanzado
+            };
+
             infoHTML += `</div>`;
             document.getElementById('infografia-trad').innerHTML = infoHTML;
 
@@ -650,6 +801,12 @@
             let partPorcentaje = 0, partCalculada = 0; 
             let infoHTMLAlfa = `<div class="bg-white rounded-xl p-6 border border-gray-200 shadow-md"><h4 class="text-lg font-bold text-gray-800 mb-6 text-center">Desglose del Cálculo (${servicio})</h4>`;
 
+            let pdfParametros = [];
+            let pdfPasos = [];
+            let pdfTopeNota = null;
+            let pdfTopeAlcanzado = false;
+            let concepto2Label = '';
+
             if (servicio === 'Consulta Médica') {
                 let numConsultas = parseInt(document.getElementById('num-consultas-flex').value) || 1;
                 let copagoTotal = 700 * numConsultas;
@@ -659,7 +816,22 @@
                 pagoCliente = copagoAplicado;
                 pagoSMNYL = factura - pagoCliente;
                 
+                concepto2Label = "Participación (N/A)";
                 document.getElementById('lbl-participacion-flex').innerText = "Participación (N/A):";
+
+                pdfParametros = [
+                    { label: 'Plan Contratado', value: plan },
+                    { label: 'Tipo de Servicio', value: servicio },
+                    { label: 'Número de Consultas', value: `${numConsultas} ($700 c/u)` },
+                    { label: 'Tope de Participación', value: 'No aplica en consultas' }
+                ];
+
+                pdfPasos = [
+                    { num: '1', titulo: 'Cálculo de Copago', desc: 'Se multiplica el número de consultas por $700.', lineas: [`Consultas: ${numConsultas} x $700.00`, `Copago Total: ${mxnFormatter.format(copagoTotal)}`] },
+                    { num: '2', titulo: 'Participación', desc: 'Las consultas no generan participación adicional.', lineas: ['Participación: NO APLICA ($0.00)'] },
+                    { num: '3', titulo: 'Aportación Cliente', desc: 'Tu pago se limita al copago o al total de la factura.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `Copago Aplicado: ${mxnFormatter.format(pagoCliente)}`] },
+                    { num: '4', titulo: 'Aportación SMNYL', desc: 'SMNYL cubre la diferencia restante de la factura.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Total Cliente: ${mxnFormatter.format(pagoCliente)}`, `Total SMNYL: ${mxnFormatter.format(pagoSMNYL)}`] }
+                ];
 
                 infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                 <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
@@ -714,15 +886,35 @@
                 pagoSMNYL = factura - pagoCliente;
 
                 const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
+                concepto2Label = `Participación (${textoEtiquetaPct})`;
                 document.getElementById('lbl-participacion-flex').innerText = `Participación (${textoEtiquetaPct}):`;
 
-                let badgeTope = partCalculada > topeParticipacion
+                pdfTopeAlcanzado = partCalculada > topeParticipacion;
+                pdfTopeNota = pdfTopeAlcanzado
+                    ? `Tope aplicado. Solo pagas ${mxnFormatter.format(topeParticipacion)}.`
+                    : `No rebasó el tope de participación (${mxnFormatter.format(topeParticipacion)}).`;
+
+                let badgeTope = pdfTopeAlcanzado
                     ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Tope aplicado! Solo pagas ${mxnFormatter.format(topeParticipacion)}</div>`
                     : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeParticipacion)}.</div>`;
 
                 let detalleExtra = extraPuntos > 0 
                     ? `Aplica el ${totalPct}% (${basePct}% base + ${extraPuntos} pts adicionales) directamente sobre la factura.` 
                     : `Aplica el 35% de participación directamente sobre la factura.`;
+
+                pdfParametros = [
+                    { label: 'Plan Contratado', value: plan },
+                    { label: 'Tipo de Servicio', value: servicio },
+                    { label: 'Participación Aplicada', value: textoEtiquetaPct },
+                    { label: 'Tope de Participación', value: mxnFormatter.format(topeParticipacion) }
+                ];
+
+                pdfPasos = [
+                    { num: '1', titulo: 'Sin Copago Fijo', desc: 'En servicios fuera del hospital no aplica copago inicial.', lineas: ['Copago Fijo: $0.00'] },
+                    { num: '2', titulo: `Participación (${totalPct}%)`, desc: detalleExtra, lineas: [`Factura: ${mxnFormatter.format(factura)}`, `x ${totalPct}% = ${mxnFormatter.format(partCalculada)}`, `Participación Aplicada: ${mxnFormatter.format(participacionAplicada)}`] },
+                    { num: '3', titulo: 'Aportación Cliente', desc: 'Tu aportación se reduce a la participación generada.', lineas: [`Participación: ${mxnFormatter.format(participacionAplicada)}`, `Total Cliente: ${mxnFormatter.format(pagoCliente)}`] },
+                    { num: '4', titulo: 'Aportación SMNYL', desc: 'La aseguradora absorbe el resto de la factura.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Total Cliente: ${mxnFormatter.format(pagoCliente)}`, `Total SMNYL: ${mxnFormatter.format(pagoSMNYL)}`] }
+                ];
 
                 infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                 <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
@@ -773,13 +965,26 @@
                 partPorcentaje = totalPct / 100;
 
                 const textoEtiquetaPct = extraPuntos > 0 ? `${totalPct}% [${basePct}% + ${extraPuntos}%]` : `${totalPct}%`;
+                concepto2Label = `Participación (${textoEtiquetaPct})`;
                 document.getElementById('lbl-participacion-flex').innerText = `Participación (${textoEtiquetaPct}):`;
+
+                pdfParametros = [
+                    { label: 'Plan / Nivel', value: `${plan} — Nivel ${nivel}` },
+                    { label: 'Tipo de Servicio', value: servicio },
+                    { label: 'Copago Fijo / Part.', value: `${mxnFormatter.format(copagoRegla)} / ${textoEtiquetaPct}` },
+                    { label: 'Tope de Participación', value: mxnFormatter.format(topeParticipacion) }
+                ];
 
                 if (factura <= copagoRegla) {
                     copagoAplicado = factura;
                     participacionAplicada = 0;
                     pagoCliente = copagoAplicado;
                     pagoSMNYL = 0;
+
+                    pdfPasos = [
+                        { num: '!', titulo: 'Copago No Superado', desc: `La factura es menor o igual al Copago Fijo del Nivel (${nivel}).`, lineas: [`Factura: ${mxnFormatter.format(factura)}`, `Copago del Nivel: ${mxnFormatter.format(copagoRegla)}`] },
+                        { num: '2', titulo: 'Sin Participación SMNYL', desc: 'Al no superar el copago inicial, la aseguradora no aporta.', lineas: [`Aportación Cliente: ${mxnFormatter.format(pagoCliente)}`, 'Aportación SMNYL: $0.00'] }
+                    ];
 
                     infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
@@ -808,13 +1013,25 @@
                     pagoCliente = copagoAplicado + participacionAplicada;
                     pagoSMNYL = factura - pagoCliente;
 
-                    let badgeTope = partCalculada > topeParticipacion
+                    pdfTopeAlcanzado = partCalculada > topeParticipacion;
+                    pdfTopeNota = pdfTopeAlcanzado
+                        ? `Tope aplicado. Solo pagas ${mxnFormatter.format(topeParticipacion)}.`
+                        : `No rebasó el tope de participación (${mxnFormatter.format(topeParticipacion)}).`;
+
+                    let badgeTope = pdfTopeAlcanzado
                         ? `<div class="mt-3 text-[11px] text-white bg-red-500 rounded px-2 py-1 text-center font-bold shadow-sm">¡Tope aplicado! Solo pagas ${mxnFormatter.format(topeParticipacion)}</div>`
                         : `<div class="mt-3 text-[11px] text-green-800 bg-green-100 rounded px-2 py-1 text-center border border-green-200 shadow-sm">No rebasó el tope de ${mxnFormatter.format(topeParticipacion)}.</div>`;
 
                     let detalleExtra = extraPuntos > 0 
                         ? `Se calcula el ${totalPct}% (${basePct}% nivel + ${extraPuntos} pts adicionales) sobre el remanente.` 
                         : `Se calcula el ${totalPct}% sobre el remanente.`;
+
+                    pdfPasos = [
+                        { num: '1', titulo: 'Resta de Copago', desc: `Según tu Nivel (${nivel}), se resta el Copago a la factura.`, lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Copago Fijo: ${mxnFormatter.format(copagoRegla)}`, `Remanente: ${mxnFormatter.format(remanente)}`] },
+                        { num: '2', titulo: `Aplica Participación (${totalPct}%)`, desc: detalleExtra, lineas: [`Remanente: ${mxnFormatter.format(remanente)}`, `x ${totalPct}% = ${mxnFormatter.format(partCalculada)}`, `Participación Aplicada: ${mxnFormatter.format(participacionAplicada)}`] },
+                        { num: '3', titulo: 'Aportación Cliente', desc: 'Se suma tu Copago Fijo más la Participación obtenida.', lineas: [`Copago Fijo: ${mxnFormatter.format(copagoAplicado)}`, `+ Participación: ${mxnFormatter.format(participacionAplicada)}`, `Total Cliente: ${mxnFormatter.format(pagoCliente)}`] },
+                        { num: '4', titulo: 'Aportación SMNYL', desc: 'SMNYL cubre todo el resto de la factura médica.', lineas: [`Factura: ${mxnFormatter.format(factura)}`, `- Total Cliente: ${mxnFormatter.format(pagoCliente)}`, `Total SMNYL: ${mxnFormatter.format(pagoSMNYL)}`] }
+                    ];
 
                     infoHTMLAlfa += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                     <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 relative flex flex-col">
@@ -862,6 +1079,25 @@
                 }
             }
 
+            ultimoCalculoFlex = {
+                modalidad: 'Alfa Medical Flex',
+                acentoRGB: [79, 70, 229], // Índigo corporativo
+                acentoClaroRGB: [238, 242, 255],
+                acentoBordeRGB: [199, 210, 254],
+                servicio,
+                factura,
+                pagoCliente,
+                pagoSMNYL,
+                concepto1Label: 'Copago Fijo',
+                concepto1Val: copagoAplicado,
+                concepto2Label,
+                concepto2Val: participacionAplicada,
+                parametros: pdfParametros,
+                pasos: pdfPasos,
+                topeNota: pdfTopeNota,
+                topeAlcanzado: pdfTopeAlcanzado
+            };
+
             infoHTMLAlfa += `</div>`;
             document.getElementById('infografia-flex').innerHTML = infoHTMLAlfa;
             
@@ -875,9 +1111,324 @@
             document.getElementById('resultados-flex').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
+        function generarPDF(tipo) {
+            const datos = tipo === 'tradicional' ? ultimoCalculoTrad : ultimoCalculoFlex;
+            if (!datos) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+            const pageWidth = doc.internal.pageSize.getWidth(); // 215.9 mm
+            const pageHeight = doc.internal.pageSize.getHeight(); // 279.4 mm
+            const margin = 16;
+            const contentWidth = pageWidth - margin * 2;
+
+            const nombreCliente = (document.getElementById(tipo === 'tradicional' ? 'cliente-pdf-trad' : 'cliente-pdf-flex').value || '').trim();
+            const nombreAsesor = (document.getElementById(tipo === 'tradicional' ? 'asesor-pdf-trad' : 'asesor-pdf-flex').value || '').trim();
+
+            const hoy = new Date();
+            const fechaTexto = hoy.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+            const fechaArchivo = hoy.toISOString().slice(0, 10);
+
+            // 1. HEADER CORPORATIVO
+            doc.setFillColor(30, 58, 138); // Azul marino oscuro
+            doc.rect(0, 0, pageWidth, 34, 'F');
+            doc.setFillColor(37, 99, 235); // Franja azul brillante inferior
+            doc.rect(0, 34, pageWidth, 2.5, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.text('Estudio Ilustrativo de Siniestro', margin, 15);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10.5);
+            doc.setTextColor(219, 234, 254);
+            doc.text(`${datos.modalidad}  |  Seguros Monterrey New York Life`, margin, 23);
+
+            doc.setFontSize(9);
+            doc.setTextColor(191, 219, 254);
+            doc.text(`Emitido el ${fechaTexto}`, pageWidth - margin, 15, { align: 'right' });
+
+            let y = 43;
+
+            // 2. FRANJA DE CLIENTE / ASESOR (Si hay datos)
+            if (nombreCliente || nombreAsesor) {
+                doc.setFillColor(248, 250, 252);
+                doc.setDrawColor(226, 232, 240);
+                doc.roundedRect(margin, y, contentWidth, 12, 2, 2, 'FD');
+
+                doc.setFontSize(9);
+                if (nombreCliente) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(71, 85, 105);
+                    doc.text('Preparado para:', margin + 4, y + 7.5);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(15, 23, 42);
+                    doc.text(nombreCliente, margin + 31, y + 7.5);
+                }
+                if (nombreAsesor) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(71, 85, 105);
+                    const xAsesor = nombreCliente ? pageWidth / 2 + 4 : margin + 4;
+                    doc.text('Asesor:', xAsesor, y + 7.5);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(15, 23, 42);
+                    doc.text(nombreAsesor, xAsesor + 14, y + 7.5);
+                }
+                y += 17;
+            }
+
+            // 3. PARÁMETROS DEL ESCENARIO
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10.5);
+            doc.setTextColor(30, 41, 59);
+            doc.text('PARÁMETROS DEL ESCENARIO SIMULADO', margin, y);
+            y += 3;
+
+            doc.setFillColor(248, 250, 252);
+            doc.setDrawColor(226, 232, 240);
+            doc.roundedRect(margin, y, contentWidth, 24, 2.5, 2.5, 'FD');
+
+            const colWidth = contentWidth / 2;
+            datos.parametros.forEach((p, idx) => {
+                const col = idx % 2;
+                const row = Math.floor(idx / 2);
+                const px = margin + 5 + col * colWidth;
+                const py = y + 8 + row * 10;
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.setTextColor(100, 116, 139);
+                doc.text(`${p.label}:`, px, py);
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9.5);
+                doc.setTextColor(15, 23, 42);
+                doc.text(String(p.value), px + 36, py);
+            });
+
+            y += 31;
+
+            // 4. TARJETAS KPI PRINCIPALES (Aportación Cliente vs SMNYL)
+            const cardGap = 6;
+            const cardW = (contentWidth - cardGap) / 2;
+            const cardH = 38;
+            const pctCliente = datos.factura > 0 ? (datos.pagoCliente / datos.factura) * 100 : 0;
+            const pctSMNYL = datos.factura > 0 ? (datos.pagoSMNYL / datos.factura) * 100 : 0;
+
+            // Tarjeta Cliente
+            doc.setFillColor(...datos.acentoClaroRGB);
+            doc.setDrawColor(...datos.acentoBordeRGB);
+            doc.roundedRect(margin, y, cardW, cardH, 3, 3, 'FD');
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(...datos.acentoRGB);
+            doc.text('APORTACIÓN DEL CLIENTE', margin + 5, y + 7);
+            doc.text(`${pctCliente.toFixed(1)}%`, margin + cardW - 5, y + 7, { align: 'right' });
+
+            doc.setFontSize(18);
+            doc.text(mxnFormatter.format(datos.pagoCliente), margin + 5, y + 17);
+
+            doc.setDrawColor(...datos.acentoBordeRGB);
+            doc.line(margin + 5, y + 21, margin + cardW - 5, y + 21);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(51, 65, 85);
+            doc.text(`${datos.concepto1Label}:`, margin + 5, y + 27);
+            doc.setFont('helvetica', 'bold');
+            doc.text(mxnFormatter.format(datos.concepto1Val), margin + cardW - 5, y + 27, { align: 'right' });
+
+            doc.setFont('helvetica', 'normal');
+            doc.text(`${datos.concepto2Label}:`, margin + 5, y + 33);
+            doc.setFont('helvetica', 'bold');
+            doc.text(mxnFormatter.format(datos.concepto2Val), margin + cardW - 5, y + 33, { align: 'right' });
+
+            // Tarjeta SMNYL
+            const rightCardX = margin + cardW + cardGap;
+            doc.setFillColor(239, 246, 255);
+            doc.setDrawColor(191, 219, 254);
+            doc.roundedRect(rightCardX, y, cardW, cardH, 3, 3, 'FD');
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(37, 99, 235);
+            doc.text('APORTACIÓN SMNYL', rightCardX + 5, y + 7);
+            doc.text(`${pctSMNYL.toFixed(1)}%`, rightCardX + cardW - 5, y + 7, { align: 'right' });
+
+            doc.setFontSize(18);
+            doc.text(mxnFormatter.format(datos.pagoSMNYL), rightCardX + 5, y + 17);
+
+            doc.setDrawColor(191, 219, 254);
+            doc.line(rightCardX + 5, y + 21, rightCardX + cardW - 5, y + 21);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(51, 65, 85);
+            doc.text('Monto Total de la Factura:', rightCardX + 5, y + 29);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(15, 23, 42);
+            doc.text(mxnFormatter.format(datos.factura), rightCardX + cardW - 5, y + 29, { align: 'right' });
+
+            y += cardH + 9;
+
+            // 5. GRÁFICA VISUAL DE DISTRIBUCIÓN (Barra Dinámica)
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9.5);
+            doc.setTextColor(30, 41, 59);
+            doc.text('DISTRIBUCIÓN VISUAL DE LA FACTURA', margin, y);
+            y += 3.5;
+
+            const barH = 9;
+            const clienteW = (contentWidth * pctCliente) / 100;
+            const smnylW = contentWidth - clienteW;
+
+            // Fondo base
+            doc.setFillColor(226, 232, 240);
+            doc.roundedRect(margin, y, contentWidth, barH, 2, 2, 'F');
+
+            if (clienteW > 0.5) {
+                doc.setFillColor(...datos.acentoRGB);
+                doc.rect(margin, y, clienteW, barH, 'F');
+            }
+            if (smnylW > 0.5) {
+                doc.setFillColor(37, 99, 235);
+                doc.rect(margin + clienteW, y, smnylW, barH, 'F');
+            }
+
+            // Etiquetas dentro de la barra si hay espacio suficiente
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(255, 255, 255);
+            if (pctCliente >= 16) {
+                doc.text(`Cliente ${pctCliente.toFixed(1)}%`, margin + clienteW / 2, y + 6, { align: 'center' });
+            }
+            if (pctSMNYL >= 16) {
+                doc.text(`SMNYL ${pctSMNYL.toFixed(1)}%`, margin + clienteW + smnylW / 2, y + 6, { align: 'center' });
+            }
+
+            // Leyenda debajo de la barra
+            y += barH + 5;
+            doc.setFillColor(...datos.acentoRGB);
+            doc.circle(margin + 2, y - 1, 1.5, 'F');
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(71, 85, 105);
+            doc.text(`Cliente: ${mxnFormatter.format(datos.pagoCliente)} (${pctCliente.toFixed(1)}%)`, margin + 6, y);
+
+            doc.setFillColor(37, 99, 235);
+            doc.circle(margin + contentWidth / 2 + 2, y - 1, 1.5, 'F');
+            doc.text(`SMNYL: ${mxnFormatter.format(datos.pagoSMNYL)} (${pctSMNYL.toFixed(1)}%)`, margin + contentWidth / 2 + 6, y);
+
+            y += 9;
+
+            // 6. DESGLOSE PASO A PASO (Cuadrícula limpia)
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10.5);
+            doc.setTextColor(30, 41, 59);
+            doc.text('DESGLOSE PASO A PASO DEL CÁLCULO', margin, y);
+            y += 4;
+
+            const stepW = (contentWidth - cardGap) / 2;
+            const stepH = 34;
+
+            datos.pasos.forEach((paso, i) => {
+                const col = i % 2;
+                const row = Math.floor(i / 2);
+                const sx = margin + col * (stepW + cardGap);
+                const sy = y + row * (stepH + 5);
+
+                doc.setFillColor(255, 255, 255);
+                doc.setDrawColor(203, 213, 225);
+                doc.roundedRect(sx, sy, stepW, stepH, 2.5, 2.5, 'FD');
+
+                // Badge circular numerado
+                const badgeColor = paso.num === '3' ? datos.acentoRGB : (paso.num === '!' ? [220, 38, 38] : [37, 99, 235]);
+                doc.setFillColor(...badgeColor);
+                doc.circle(sx + 6.5, sy + 6.5, 3.5, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text(paso.num, sx + 6.5, sy + 7.5, { align: 'center' });
+
+                // Título del paso
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(9.5);
+                doc.text(paso.titulo, sx + 12.5, sy + 7.5);
+
+                // Descripción corta
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(100, 116, 139);
+                const descLines = doc.splitTextToSize(paso.desc, stepW - 9);
+                doc.text(descLines.slice(0, 2), sx + 4.5, sy + 13.5);
+
+                // Líneas matemáticas
+                let ly = sy + 21.5;
+                paso.lineas.forEach((linea, lIdx) => {
+                    const esUltima = lIdx === paso.lineas.length - 1;
+                    doc.setFont('helvetica', esUltima ? 'bold' : 'normal');
+                    doc.setFontSize(8.5);
+                    doc.setTextColor(esUltima ? 15 : 71, esUltima ? 23 : 85, esUltima ? 42 : 105);
+                    doc.text(linea, sx + 4.5, ly);
+                    ly += 4.3;
+                });
+            });
+
+            const numRows = Math.ceil(datos.pasos.length / 2);
+            y += numRows * (stepH + 5) + 2;
+
+            // 7. AVISO DE TOPE (Si aplica)
+            if (datos.topeNota) {
+                if (datos.topeAlcanzado) {
+                    doc.setFillColor(254, 242, 242);
+                    doc.setDrawColor(252, 165, 165);
+                    doc.setTextColor(185, 28, 28);
+                } else {
+                    doc.setFillColor(240, 253, 244);
+                    doc.setDrawColor(134, 239, 172);
+                    doc.setTextColor(21, 128, 61);
+                }
+                doc.roundedRect(margin, y, contentWidth, 10, 2, 2, 'FD');
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text(datos.topeNota, pageWidth / 2, y + 6.3, { align: 'center' });
+            }
+
+            // 8. FOOTER INSTITUCIONAL Y AVISO LEGAL
+            const footerY = pageHeight - 20;
+            doc.setDrawColor(203, 213, 225);
+            doc.line(margin, footerY, pageWidth - margin, footerY);
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(51, 65, 85);
+            doc.text('Suma asegurada máxima institucional: $170,000,000 MXN.', pageWidth / 2, footerY + 5, { align: 'center' });
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(100, 116, 139);
+            doc.text(
+                'Este documento es un ejercicio ilustrativo con fines informativos. Los montos reales están sujetos a las condiciones generales vigentes de la póliza contratada.',
+                pageWidth / 2,
+                footerY + 10,
+                { align: 'center', maxWidth: contentWidth }
+            );
+
+            // Nombre dinámico del archivo
+            const slugTipo = tipo === 'tradicional' ? 'AlfaMedical' : 'AlfaMedicalFlex';
+            const slugCliente = nombreCliente
+                ? '_' + nombreCliente.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '_')
+                : '';
+            doc.save(`Estudio_${slugTipo}${slugCliente}_${fechaArchivo}.pdf`);
+        }
+
         // Inicializar estado de UI
         actualizarCamposTradicional();
         actualizarCamposFlex();
+        cargarAsesorGuardado();
     </script>
 </body>
 </html>
